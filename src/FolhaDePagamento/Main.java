@@ -3,8 +3,8 @@ package FolhaDePagamento;
 import java.util.Scanner;
 
 public class Main {
-    static String[][] funcs = new String[1000][10];
-    static int indice_atual = 0;
+    private static String[][] funcs = new String[1000][10];
+    private static int indice_funcs = 0;
 
     // [i][0] = Nome
     // [i][1] = Endereço
@@ -16,6 +16,28 @@ public class Main {
     // [i][7] = Pertence à sindicato
     // [i][8] = Taxa do sindicato
     // [i][9] = ID
+
+    private static String[][] vendas_realizadas = new String[5000][3];
+    private static int indice_vendas_realizadas = 0;
+
+    // [i][0] = ID do funcionário
+    // [i][1] = Valor
+    // [i][2] = Data da venda
+
+    private static String[][] cartoes_ponto = new String[5000][5];
+    private static int indice_cartoes_ponto = 0;
+
+    // [i][0] = ID
+    // [i][1] = Data entrada
+    // [i][2] = Hora entrada
+    // [i][3] = Data saída
+    // [i][4] = Hora saída
+
+    private static String[][] taxas_de_servicos = new String[5000][2];
+    private static int indice_taxas_de_servicos = 0;
+
+    // [i][0] = ID
+    // [i][1] = Valor da taxa
 
     /* ----------------------------------------------------------------------------------- */
     /* ----------------------------------------------------------------------------------- */
@@ -48,9 +70,10 @@ public class Main {
                 break;
             case 2: // Menu de cartões ponto
                 System.out.println("\n-=-=- CARTÃO PONTO -=-=-");
-                System.out.println("1 - Lançar Cartão Ponto");
-                System.out.println("2 - Listar Cartões Ponto");
-                System.out.println("3 - Retornar");
+                System.out.println("1 - Bater Cartão Ponto Entrada");
+                System.out.println("2 - Bater Cartão Ponto Saída");
+                System.out.println("3 - Listar Cartões Ponto");
+                System.out.println("4 - Retornar");
                 System.out.print("--> ");
                 break;
             case 3: // Menu de vendas
@@ -180,11 +203,11 @@ public class Main {
         String entrada;
         System.out.print("\nNome: ");
         entrada = input.nextLine();
-        funcs[indice_atual][0] = entrada;
+        funcs[indice_funcs][0] = entrada;
 
         System.out.print("Endereço: ");
         entrada = input.nextLine();
-        funcs[indice_atual][1] = entrada;
+        funcs[indice_funcs][1] = entrada;
 
         System.out.println("Tipo de funcionário: ");
         System.out.println("1 - Horário");
@@ -192,47 +215,47 @@ public class Main {
         System.out.println("3 - Comissionado");
         System.out.print("--> ");
         entrada = input.nextLine();
-        funcs[indice_atual][2] = entrada;
+        funcs[indice_funcs][2] = entrada;
 
         if(entrada.equals("1")) {
             System.out.print("Valor da hora: R$");
             String valor_hora = input.nextLine();
-            funcs[indice_atual][3] = valor_hora;
-            funcs[indice_atual][4] = "-1";
-            funcs[indice_atual][5] = "-1";
+            funcs[indice_funcs][3] = valor_hora;
+            funcs[indice_funcs][4] = "-1";
+            funcs[indice_funcs][5] = "-1";
         } else if(entrada.equals("2")) {
             System.out.print("Salário: R$");
             String salario = input.nextLine();
-            funcs[indice_atual][3] = "-1";
-            funcs[indice_atual][4] = salario;
-            funcs[indice_atual][5] = "-1";
+            funcs[indice_funcs][3] = "-1";
+            funcs[indice_funcs][4] = salario;
+            funcs[indice_funcs][5] = "-1";
         } else if(entrada.equals("3")) {
             System.out.print("Salário: R$");
             String salario = input.nextLine();
             System.out.print("Comissão (sem '%'): ");
             String comissao = input.nextLine();
-            funcs[indice_atual][3] = "-1";
-            funcs[indice_atual][4] = salario;
-            funcs[indice_atual][5] = comissao;
+            funcs[indice_funcs][3] = "-1";
+            funcs[indice_funcs][4] = salario;
+            funcs[indice_funcs][5] = comissao;
         }
 
-        funcs[indice_atual][6] = "s";
+        funcs[indice_funcs][6] = "s";
 
         System.out.print("Pertence a Sindicato (s/n): ");
         entrada = input.nextLine();
-        funcs[indice_atual][7] = entrada;
+        funcs[indice_funcs][7] = entrada;
 
         if(entrada.equals("s")) {
             System.out.print("Taxa do Sindicato: R$");
             String taxa_sindicato = input.nextLine();
-            funcs[indice_atual][8] = taxa_sindicato;
+            funcs[indice_funcs][8] = taxa_sindicato;
         } else {
-            funcs[indice_atual][8] = "-1";
+            funcs[indice_funcs][8] = "-1";
         }
 
-        funcs[indice_atual][9] = Integer.toString(indice_atual + 1);
+        funcs[indice_funcs][9] = Integer.toString(indice_funcs + 1);
 
-        indice_atual++;
+        indice_funcs++;
 
     } // Fim de "adicionar_funcionario"
 
@@ -388,7 +411,7 @@ public class Main {
 
     // Lista todas as informações de todos os funcionários
     private static void listar_funcionario() {
-        for(int i = 0; i < indice_atual; i++) {
+        for(int i = 0; i < indice_funcs; i++) {
             if(funcs[i][6].equals("s")) {
                 System.out.printf("\nID: %d\n", Integer.parseInt(funcs[i][9]));
                 System.out.printf("Nome: %s\n", funcs[i][0]);
@@ -426,7 +449,7 @@ public class Main {
         Scanner input = new Scanner(System.in);
         System.out.print("\nInsira o ID do funcionário: ");
         int id = input.nextInt();
-        if(id <= indice_atual) {
+        if(id <= indice_funcs) {
             return id - 1; // Retorna o índice do funcionário no array
         } else {
             return -1; // Não encontrou o empregado
@@ -447,20 +470,90 @@ public class Main {
             int opc = input.nextInt();
             switch(opc) {
                 case 1:
-                    System.out.println("\nLANÇAR CARTÃO PONTO\n");
-                    // lancar_cartao_ponto();
+                    // System.out.println("\nLANÇAR CARTÃO PONTO\n");
+                    entrada_cartao_ponto();
                     break;
                 case 2:
-                    System.out.println("\nLISTAR CARTÕES PONTO\n");
-                    // listar_cartoes_ponto();
+                    saida_cartao_ponto();
                     break;
                 case 3:
+                    // System.out.println("\nLISTAR CARTÕES PONTO\n");
+                    listar_cartoes_ponto();
+                    break;
+                case 4:
                     return;
                 default:
                     System.out.println("\nOPÇÃO INVÁLIDA!\n");
             }
         }
     } // Fim de "cartao_ponto"
+
+    private static void entrada_cartao_ponto() {
+        Scanner input = new Scanner(System.in);
+        System.out.print("\nInsira o ID do funcionário: ");
+        String id = input.nextLine();
+
+        if(indice_cartoes_ponto != 0) {
+            for(int i = 0; i < indice_cartoes_ponto; i++) {
+                if(cartoes_ponto[i][0].equals(id)) {
+                    System.out.println("\nFuncionário já bateu ponto de entrada!");
+                    return;
+                }
+            }
+        }
+
+        cartoes_ponto[indice_cartoes_ponto][0] = id;
+
+        System.out.print("Data de entrada (dd/mm/aa): ");
+        String data_entrada = input.nextLine();
+        cartoes_ponto[indice_cartoes_ponto][1] = data_entrada;
+
+        System.out.print("Hora de entrada (hh:mm): ");
+        String hora_entrada = input.nextLine();
+        cartoes_ponto[indice_cartoes_ponto][2] = hora_entrada;
+
+        cartoes_ponto[indice_cartoes_ponto][3] = "-1";
+        cartoes_ponto[indice_cartoes_ponto][4] = "-1";
+
+        indice_cartoes_ponto++;
+    } // Fim de "entrada_cartao_ponto"
+
+    private static void saida_cartao_ponto() {
+        Scanner input = new Scanner(System.in);
+        System.out.print("\nInsira o ID do funcionário: ");
+        String id = input.nextLine();
+
+        for(int i = 0; i < indice_cartoes_ponto; i++) {
+            if(cartoes_ponto[i][0].equals(id) && cartoes_ponto[i][3].equals("-1")) {
+                System.out.print("Data de saída (dd/mm/aa): ");
+                String data_saida = input.nextLine();
+                cartoes_ponto[i][3] = data_saida;
+
+                System.out.print("Hora de saída (hh:mm): ");
+                String hora_saida = input.nextLine();
+                cartoes_ponto[i][4] = hora_saida;
+                break;
+            } else {
+                System.out.println("\nFuncionário já bateu o ponto de saída!");
+                break;
+            }
+        }
+    } // Fim de "saida_cartao_ponto"
+
+    private static void listar_cartoes_ponto() {
+        for(int i = 0; i < indice_cartoes_ponto; i++) {
+            System.out.printf("\nID: %s\n", cartoes_ponto[i][0]);
+            int id = Integer.parseInt(cartoes_ponto[i][0]);
+            System.out.printf("Nome: %s\n", funcs[id - 1][0]);
+            System.out.printf("Data de entrada: %s\n", cartoes_ponto[i][1]);
+            System.out.printf("Hora de entrada: %s\n", cartoes_ponto[i][2]);
+
+            if(!cartoes_ponto[i][3].equals("-1")) {
+                System.out.printf("Data de saída: %s\n", cartoes_ponto[i][3]);
+                System.out.printf("Hora de saída: %s\n", cartoes_ponto[i][4]);
+            }
+        }
+    } // Fim de "listar_cartoes_ponto"
 
 
     /* ------------------------------------------------------------------------------------ */
@@ -475,12 +568,12 @@ public class Main {
             int opc = input.nextInt();
             switch(opc) {
                 case 1:
-                    System.out.println("\nLANÇAR VENDA\n");
-                    // lancar_venda();
+                    // System.out.println("\nLANÇAR VENDA\n");
+                    lancar_venda();
                     break;
                 case 2:
-                    System.out.println("\nLISTAR VENDAS\n");
-                    // listar_vendas();
+                    // System.out.println("\nLISTAR VENDAS\n");
+                    listar_vendas();
                     break;
                 case 3:
                     return;
@@ -490,6 +583,33 @@ public class Main {
         }
     } // Fim de "vendas"
 
+    private static void lancar_venda() {
+        Scanner input = new Scanner(System.in);
+        System.out.print("\nInsira o ID do Funcionário: ");
+        String id = input.nextLine();
+        vendas_realizadas[indice_vendas_realizadas][0] = id;
+
+        System.out.print("Valor da venda: R$");
+        String valor = input.nextLine();
+        vendas_realizadas[indice_vendas_realizadas][1] = valor;
+
+        System.out.print("Data da venda (dd/mm/aa): ");
+        String data = input.nextLine();
+        vendas_realizadas[indice_vendas_realizadas][2] = data;
+
+        indice_vendas_realizadas++;
+    } // Fim de "lançar_venda"
+
+    private static void listar_vendas() {
+        for(int i = 0; i < indice_vendas_realizadas; i++) {
+            int id = Integer.parseInt(vendas_realizadas[i][0]);
+            System.out.printf("\nID: %d\n", id);
+            System.out.printf("Nome: %s\n", funcs[id - 1][0]);
+            float valor = Float.parseFloat(vendas_realizadas[i][1]);
+            System.out.printf("Valor da venda: R$%.2f\n", valor);
+            System.out.printf("Data da venda: %s\n", vendas_realizadas[i][2]);
+        }
+    } // Fim de "listar_vendas"
 
     /* ------------------------------------------------------------------------------------ */
     /* ------------------------------------------------------------------------------------ */
@@ -503,12 +623,12 @@ public class Main {
             int opc = input.nextInt();
             switch(opc) {
                 case 1:
-                    System.out.println("\nLANÇAR TAXA DE SERVIÇO\n");
-                    // lancar_taxa_de_servico();
+                    // System.out.println("\nLANÇAR TAXA DE SERVIÇO\n");
+                    lancar_taxa_de_servico();
                     break;
                 case 2:
-                    System.out.println("\nLISTAR TAXAS DE SERVIÇO\n");
-                    // listar_taxas_de_servico();
+                    // System.out.println("\nLISTAR TAXAS DE SERVIÇO\n");
+                    listar_taxas_de_servico();
                     break;
                 case 3:
                     return;
@@ -518,6 +638,27 @@ public class Main {
         }
     } // Fim de "taxa_de_servico"
 
+    private static void lancar_taxa_de_servico() {
+        Scanner input = new Scanner(System.in);
+        System.out.print("\nInsira o ID do funcionário: ");
+        String id = input.nextLine();
+        taxas_de_servicos[indice_taxas_de_servicos][0] = id;
+        System.out.print("Valor da taxa: R$");
+        String valor_taxa = input.nextLine();
+        taxas_de_servicos[indice_taxas_de_servicos][1] = valor_taxa;
+
+        indice_taxas_de_servicos++;
+    } // Fim de "lancar_taxa_de_servico"
+
+    private static void listar_taxas_de_servico() {
+        for(int i = 0; i < indice_taxas_de_servicos; i++) {
+            System.out.printf("\nID: %s\n", taxas_de_servicos[i][0]);
+            int id = Integer.parseInt(taxas_de_servicos[i][0]);
+            System.out.printf("Nome: %s\n", funcs[id - 1][0]);
+            float valor = Float.parseFloat(taxas_de_servicos[i][1]);
+            System.out.printf("Valor da taxa: R$%.2f\n", valor);
+        }
+    } // Fim de "listar_taxas_de_servico"
 
     /* ------------------------------------------------------------------------------------ */
     /* ------------------------------------------------------------------------------------ */
