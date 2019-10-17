@@ -3,19 +3,22 @@ package FolhaDePagamento;
 import java.util.Scanner;
 
 public class Main {
-    private static String[][] funcs = new String[1000][10];
+    private static String[][] funcs = new String[1000][13];
     private static int indice_funcs = 0;
 
-    // [i][0] = Nome
-    // [i][1] = Endereço
-    // [i][2] = Tipo de funcionário (1 - Horário, 2 - Assalariado, 3 - Comissionado)
-    // [i][3] = Valor Hora
-    // [i][4] = Salário
-    // [i][5] = Comissão
-    // [i][6] = Ativo
-    // [i][7] = Pertence à sindicato
-    // [i][8] = Taxa do sindicato
-    // [i][9] = ID
+    // [i][0]  = Nome
+    // [i][1]  = Endereço
+    // [i][2]  = Tipo de funcionário (1 - Horário, 2 - Assalariado, 3 - Comissionado)
+    // [i][3]  = Valor Hora
+    // [i][4]  = Salário
+    // [i][5]  = Comissão
+    // [i][6]  = Ativo
+    // [i][7]  = Pertence à sindicato
+    // [i][8]  = Taxa do sindicato
+    // [i][9]  = ID
+    // [i][10] = Forma de pagamento (1 - Depósito bancário, 2 - Cheque em mãos, 3 - Cheque pelo correio)
+    // [i][11] = Dia preferido (Segunda a Sexta)
+    // [i][12] = Tipo de pagamento (1 - Semanal, 2 - Quinzenal, 3 - Mensal)
 
     private static String[][] vendas_realizadas = new String[5000][3];
     private static int indice_vendas_realizadas = 0;
@@ -38,6 +41,8 @@ public class Main {
 
     // [i][0] = ID
     // [i][1] = Valor da taxa
+
+    private static String[] semana = {"Segunda", "Terça", "Quarta", "Quinta", "Sexta"};
 
     /* ----------------------------------------------------------------------------------- */
     /* ----------------------------------------------------------------------------------- */
@@ -120,39 +125,34 @@ public class Main {
 
             switch(opcao) {
                 case 1:
-                    // System.out.println("FUNCIONÁRIOS");
                     funcionarios();
                     break;
                 case 2:
-                    // System.out.println("CARTÃO PONTO");
                     cartao_ponto();
                     break;
                 case 3:
-                    // System.out.println("VENDA");
                     vendas();
                     break;
                 case 4:
-                    // System.out.println("TAXA DE SERVIÇO");
                     taxa_de_servico();
                     break;
                 case 5:
-                    System.out.println("\nRODAR FOLHA DE PAGAMENTOS\n");
+                    System.out.println("\nRODAR FOLHA DE PAGAMENTOS");
                     // rodar_folha_de_pagamentos();
                     break;
                 case 6:
-                    // System.out.println("AGENDAS DE PAGAMENTO");
                     agendas_de_pagamento();
                     break;
                 case 7:
-                    System.out.println("\nUNDO\n");
+                    System.out.println("\nUNDO");
                     // undo();
                     break;
                 case 8:
-                    System.out.println("\nREDO\n");
+                    System.out.println("\nREDO");
                     // redo();
                     break;
                 default:
-                    System.out.println("\nOPÇÃO INVÁLIDA!\n");
+                    System.out.println("\nOPÇÃO INVÁLIDA!");
             }
         }
 
@@ -173,19 +173,15 @@ public class Main {
             int opc = input.nextInt();
             switch(opc) {
                 case 1:
-                    // System.out.println("\nADICIONAR FUNCIONÁRIO\n");
                     adicionar_funcionario();
                     break;
                 case 2:
-                    // System.out.println("\nREMOVER FUNCIONÁRIO\n");
                     remover_funcionario();
                     break;
                 case 3:
-                    // System.out.println("\nEDITAR FUNCIONÁRIO\n");
                     editar_funcionario(-1);
                     break;
                 case 4:
-                    // System.out.println("\nLISTAR FUNCIONÁRIOS\n");
                     listar_funcionario();
                     break;
                 case 5:
@@ -217,26 +213,30 @@ public class Main {
         entrada = input.nextLine();
         funcs[indice_funcs][2] = entrada;
 
-        if(entrada.equals("1")) {
-            System.out.print("Valor da hora: R$");
-            String valor_hora = input.nextLine();
-            funcs[indice_funcs][3] = valor_hora;
-            funcs[indice_funcs][4] = "-1";
-            funcs[indice_funcs][5] = "-1";
-        } else if(entrada.equals("2")) {
-            System.out.print("Salário: R$");
-            String salario = input.nextLine();
-            funcs[indice_funcs][3] = "-1";
-            funcs[indice_funcs][4] = salario;
-            funcs[indice_funcs][5] = "-1";
-        } else if(entrada.equals("3")) {
-            System.out.print("Salário: R$");
-            String salario = input.nextLine();
-            System.out.print("Comissão (sem '%'): ");
-            String comissao = input.nextLine();
-            funcs[indice_funcs][3] = "-1";
-            funcs[indice_funcs][4] = salario;
-            funcs[indice_funcs][5] = comissao;
+        switch(entrada) {
+            case "1":
+                System.out.print("Valor da hora: R$");
+                String valor_hora = input.nextLine();
+                funcs[indice_funcs][3] = valor_hora;
+                funcs[indice_funcs][4] = "-1";
+                funcs[indice_funcs][5] = "-1";
+                break;
+            case "2":
+                System.out.print("Salário: R$");
+                String salario = input.nextLine();
+                funcs[indice_funcs][3] = "-1";
+                funcs[indice_funcs][4] = salario;
+                funcs[indice_funcs][5] = "-1";
+                break;
+            case "3":
+                System.out.print("Salário: R$");
+                String sal = input.nextLine();
+                System.out.print("Comissão (sem '%'): ");
+                String comissao = input.nextLine();
+                funcs[indice_funcs][3] = "-1";
+                funcs[indice_funcs][4] = sal;
+                funcs[indice_funcs][5] = comissao;
+                break;
         }
 
         funcs[indice_funcs][6] = "s";
@@ -254,6 +254,32 @@ public class Main {
         }
 
         funcs[indice_funcs][9] = Integer.toString(indice_funcs + 1);
+
+        System.out.print("Forma de pagamento:\n");
+        System.out.print("1 - Depósito bancário\n");
+        System.out.print("2 - Cheque em mãos\n");
+        System.out.print("3 - Cheque pelos correios\n");
+        System.out.print("--> ");
+        entrada = input.nextLine();
+        funcs[indice_funcs][10] = entrada;
+
+        System.out.print("Dia preferido de pagamento:\n");
+        System.out.print("2 - Segunda\n");
+        System.out.print("3 - Terça\n");
+        System.out.print("4 - Quarta\n");
+        System.out.print("5 - Quinta\n");
+        System.out.print("6 - Sexta\n");
+        System.out.print("--> ");
+        entrada = input.nextLine();
+        funcs[indice_funcs][11] = entrada;
+
+        System.out.print("Tipo de pagamento:\n");
+        System.out.print("1 - Semanal\n");
+        System.out.print("2 - Quinzenal\n");
+        System.out.print("3 - Mensal\n");
+        System.out.print("--> ");
+        entrada = input.nextLine();
+        funcs[indice_funcs][12] = entrada;
 
         indice_funcs++;
 
@@ -297,6 +323,10 @@ public class Main {
         System.out.println("2 - Endereço");
         System.out.println("3 - Tipo de Funcionário");
         System.out.println("4 - Sindicato");
+        System.out.println("5 - Forma de pagamento");
+        System.out.println("6 - Dia preferido de pagamento");
+        System.out.println("7 - Tipo de pagamento");
+        System.out.println("8 - Retornar");
         System.out.print("--> ");
         Scanner input_opc = new Scanner(System.in);
         int opcao = input_opc.nextInt();
@@ -325,26 +355,30 @@ public class Main {
                 System.out.print("--> ");
                 String novo_tipo = input.nextLine();
                 funcs[indice_funcionario][2] = novo_tipo;
-                if(novo_tipo.equals("1")) {
-                    System.out.print("Novo valor da hora: R$");
-                    String valor_hora = input.nextLine();
-                    funcs[indice_funcionario][3] = valor_hora;
-                    funcs[indice_funcionario][4] = "-1";
-                    funcs[indice_funcionario][5] = "-1";
-                } else if(novo_tipo.equals("2")) {
-                    System.out.print("Novo salário: R$");
-                    String salario = input.nextLine();
-                    funcs[indice_funcionario][3] = "-1";
-                    funcs[indice_funcionario][4] = salario;
-                    funcs[indice_funcionario][5] = "-1";
-                } else if(novo_tipo.equals("3")) {
-                    System.out.print("Novo salário: R$");
-                    String salario = input.nextLine();
-                    System.out.print("Nova comissão (sem '%'): ");
-                    String comissao = input.nextLine();
-                    funcs[indice_funcionario][3] = "-1";
-                    funcs[indice_funcionario][4] = salario;
-                    funcs[indice_funcionario][5] = comissao;
+                switch(novo_tipo) {
+                    case "1":
+                        System.out.print("Novo valor da hora: R$");
+                        String valor_hora = input.nextLine();
+                        funcs[indice_funcionario][3] = valor_hora;
+                        funcs[indice_funcionario][4] = "-1";
+                        funcs[indice_funcionario][5] = "-1";
+                        break;
+                    case "2":
+                        System.out.print("Novo salário: R$");
+                        String salario = input.nextLine();
+                        funcs[indice_funcionario][3] = "-1";
+                        funcs[indice_funcionario][4] = salario;
+                        funcs[indice_funcionario][5] = "-1";
+                        break;
+                    case "3":
+                        System.out.print("Novo salário: R$");
+                        String sal = input.nextLine();
+                        System.out.print("Nova comissão (sem '%'): ");
+                        String comissao = input.nextLine();
+                        funcs[indice_funcionario][3] = "-1";
+                        funcs[indice_funcionario][4] = sal;
+                        funcs[indice_funcionario][5] = comissao;
+                        break;
                 }
 
                 System.out.println("\nTipo de funcionário alterado com sucesso!");
@@ -365,6 +399,46 @@ public class Main {
 
                 System.out.println("\nSindicato alterado com sucesso!");
                 break;
+            case 5:
+                Scanner in = new Scanner(System.in);
+                System.out.print("Forma de pagamento:\n");
+                System.out.print("1 - Depósito bancário\n");
+                System.out.print("2 - Cheque em mãos\n");
+                System.out.print("3 - Cheque pelos correios\n");
+                System.out.print("--> ");
+                String nova_forma = in.nextLine();
+                funcs[indice_funcionario][10] = nova_forma;
+
+                System.out.println("\nForma de pagamento alterada com sucesso!");
+                break;
+            case 6:
+                Scanner inp = new Scanner(System.in);
+                System.out.print("Dia preferido de pagamento:\n");
+                System.out.print("2 - Segunda\n");
+                System.out.print("3 - Terça\n");
+                System.out.print("4 - Quarta\n");
+                System.out.print("5 - Quinta\n");
+                System.out.print("6 - Sexta\n");
+                System.out.print("--> ");
+                String novo_dia_preferido = inp.nextLine();
+                funcs[indice_funcionario][11] = novo_dia_preferido;
+
+                System.out.println("\nDia preferido de pagamento alterado com sucesso!");
+                break;
+            case 7:
+                Scanner inpu = new Scanner(System.in);
+                System.out.print("Tipo de pagamento:\n");
+                System.out.print("1 - Semanal\n");
+                System.out.print("2 - Quinzenal\n");
+                System.out.print("3 - Mensal\n");
+                System.out.print("--> ");
+                String novo_tipo_pagamento = inpu.nextLine();
+                funcs[indice_funcs][12] = novo_tipo_pagamento;
+
+                System.out.println("\nTipo de pagamento alterado com sucesso!");
+                break;
+            case 8:
+                return;
         }
 
         Scanner in = new Scanner(System.in);
@@ -373,7 +447,6 @@ public class Main {
 
         if(continuar.equals("s")) {
             editar_funcionario(indice_funcionario);
-            return;
         }
 
     } // Fim de "editar_funcionario"
@@ -407,6 +480,24 @@ public class Main {
         } else {
             System.out.println("Não");
         }
+        System.out.print("Forma de pagamento: ");
+        if(funcs[indice_funcionario][10].equals("1")) {
+            System.out.println("Depósito bancário");
+        } else if(funcs[indice_funcionario][10].equals("2")) {
+            System.out.println("Cheque em mãos");
+        } else {
+            System.out.println("Cheque pelos correios");
+        }
+        int dia = Integer.parseInt(funcs[indice_funcionario][11]);
+        System.out.printf("Dia preferido de pagamento: %s\n", semana[dia - 2]);
+        System.out.print("Tipo de pagamento: ");
+        if(funcs[indice_funcionario][12].equals("1")) {
+            System.out.println("Semanal");
+        } else if(funcs[indice_funcionario][12].equals("2")) {
+            System.out.println("Quinzenal");
+        } else {
+            System.out.println("Mensal");
+        }
     } // Fim de "imprimir_funcionario"
 
     // Lista todas as informações de todos os funcionários
@@ -439,6 +530,24 @@ public class Main {
                 } else {
                     System.out.println("Não");
                 }
+                System.out.print("Forma de pagamento: ");
+                if(funcs[i][10].equals("1")) {
+                    System.out.println("Depósito bancário");
+                } else if(funcs[i][10].equals("2")) {
+                    System.out.println("Cheque em mãos");
+                } else {
+                    System.out.println("Cheque pelos correios");
+                }
+                int dia = Integer.parseInt(funcs[i][11]);
+                System.out.printf("Dia preferido de pagamento: %s\n", semana[dia - 2]);
+                System.out.print("Tipo de pagamento: ");
+                if(funcs[i][12].equals("1")) {
+                    System.out.println("Semanal");
+                } else if(funcs[i][12].equals("2")) {
+                    System.out.println("Quinzenal");
+                } else {
+                    System.out.println("Mensal");
+                }
             }
         }
     } // Fim de "listar_funcionario"
@@ -470,14 +579,12 @@ public class Main {
             int opc = input.nextInt();
             switch(opc) {
                 case 1:
-                    // System.out.println("\nLANÇAR CARTÃO PONTO\n");
                     entrada_cartao_ponto();
                     break;
                 case 2:
                     saida_cartao_ponto();
                     break;
                 case 3:
-                    // System.out.println("\nLISTAR CARTÕES PONTO\n");
                     listar_cartoes_ponto();
                     break;
                 case 4:
@@ -623,11 +730,9 @@ public class Main {
             int opc = input.nextInt();
             switch(opc) {
                 case 1:
-                    // System.out.println("\nLANÇAR TAXA DE SERVIÇO\n");
                     lancar_taxa_de_servico();
                     break;
                 case 2:
-                    // System.out.println("\nLISTAR TAXAS DE SERVIÇO\n");
                     listar_taxas_de_servico();
                     break;
                 case 3:
