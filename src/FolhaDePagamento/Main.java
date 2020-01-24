@@ -3,7 +3,9 @@ package FolhaDePagamento;
 import java.util.Scanner;
 
 public class Main {
-    private static String[][] funcs = new String[1000][13];
+    private static String data_hoje;
+
+    private static String[][] funcs = new String[1000][15];
     private static int indice_funcs = 0;
 
     // [i][0]  = Nome
@@ -19,31 +21,96 @@ public class Main {
     // [i][10] = Forma de pagamento (1 - Depósito bancário, 2 - Cheque em mãos, 3 - Cheque pelo correio)
     // [i][11] = Dia preferido (Segunda a Sexta)
     // [i][12] = Tipo de pagamento (1 - Semanal, 2 - Quinzenal, 3 - Mensal)
+    // [i][13] = Próximo pagamento
+    // [i][14] = Último pagamento
 
-    private static String[][] vendas_realizadas = new String[5000][3];
+    private static String[][] vendas_realizadas = new String[5000][4];
     private static int indice_vendas_realizadas = 0;
 
     // [i][0] = ID do funcionário
     // [i][1] = Valor
     // [i][2] = Data da venda
+    // [i][3] = Contabilizado
 
     private static String[][] cartoes_ponto = new String[5000][5];
     private static int indice_cartoes_ponto = 0;
 
     // [i][0] = ID
-    // [i][1] = Data entrada
+    // [i][1] = Data ponto
     // [i][2] = Hora entrada
-    // [i][3] = Data saída
-    // [i][4] = Hora saída
+    // [i][3] = Hora saída
+    // [i][4] = Contabilizado
 
-    private static String[][] taxas_de_servicos = new String[5000][2];
+    private static String[][] taxas_de_servicos = new String[5000][3];
     private static int indice_taxas_de_servicos = 0;
 
     // [i][0] = ID
     // [i][1] = Valor da taxa
+    // [i][2] = Contabilizado
 
     private static String[] semana = {"Segunda", "Terça", "Quarta", "Quinta", "Sexta"};
 
+
+    private static void passar_dia() {
+        // Scanner input = new Scanner(System.in);
+        // System.out.print("Data de hoje (dd/mm/aa): ");
+        // data_hoje = input.nextLine();
+
+        String data_final;
+        String[] data = data_hoje.split("/");
+        int dia_hoje = Integer.parseInt(data[0]);
+        int mes_hoje = Integer.parseInt(data[1]);
+        int ano_hoje = Integer.parseInt(data[2]);
+
+        if(mes_hoje == 1 || mes_hoje == 3 || mes_hoje == 5 || mes_hoje == 7 || mes_hoje == 8 || mes_hoje == 10) {
+            if(dia_hoje + 1 > 31) {
+                dia_hoje = (dia_hoje + 1) - 31;
+                mes_hoje += 1;
+            } else {
+                dia_hoje = (dia_hoje + 1);
+            }
+        } else if(mes_hoje == 4 || mes_hoje == 6 || mes_hoje == 9 || mes_hoje == 11) {
+            if(dia_hoje + 1 > 30) {
+                dia_hoje = (dia_hoje + 1) - 30;
+                mes_hoje += 1;
+            } else {
+                dia_hoje = (dia_hoje + 1);
+            }
+        } else if(mes_hoje == 2) {
+            if(dia_hoje + 1 > 28) {
+                dia_hoje = (dia_hoje + 1) - 28;
+                mes_hoje += 1;
+            } else {
+                dia_hoje = (dia_hoje + 7);
+            }
+        } else { // Mês == 12
+            if (dia_hoje + 1 > 31) {
+                dia_hoje = (dia_hoje + 1) - 31;
+                mes_hoje = 1;
+                ano_hoje += 1;
+            } else {
+                dia_hoje = (dia_hoje + 1);
+            }
+        }
+
+        if(mes_hoje < 10) {
+            if (dia_hoje < 10) {
+                data_final = "0" + dia_hoje + "/0" + mes_hoje + "/" + ano_hoje;
+            } else {
+                data_final = dia_hoje + "/0" + mes_hoje + "/" + ano_hoje;
+            }
+        } else {
+            if (dia_hoje < 10) {
+                data_final = "0" + dia_hoje + "/" + mes_hoje + "/" + ano_hoje;
+            } else {
+                data_final = dia_hoje + "/" + mes_hoje + "/" + ano_hoje;
+            }
+        }
+
+        data_hoje = data_final;
+        rodar_folha_de_pagamentos();
+
+    } // Fim de Passar Dia
     /* ----------------------------------------------------------------------------------- */
     /* ----------------------------------------------------------------------------------- */
     /* -------------------------------------- MENUS -------------------------------------- */
@@ -53,15 +120,16 @@ public class Main {
         switch(opc) {
             case 0: // Menu principal
                 System.out.println("\n-=-=- FOLHA DE PAGAMENTO -=-=-");
-                System.out.println("1 - Funcionários");
-                System.out.println("2 - Cartão Ponto");
-                System.out.println("3 - Venda");
-                System.out.println("4 - Taxa de Serviço");
-                System.out.println("5 - Rodar Folha de Pagamento");
-                System.out.println("6 - Agenda de Pagamentos");
-                System.out.println("7 - Undo");
-                System.out.println("8 - Redo");
-                System.out.println("9 - Sair");
+                System.out.println("1  - Funcionários");
+                System.out.println("2  - Cartão Ponto");
+                System.out.println("3  - Venda");
+                System.out.println("4  - Taxa de Serviço");
+                System.out.println("5  - Rodar Folha de Pagamento");
+                System.out.println("6  - Agenda de Pagamentos");
+                System.out.println("7  - Undo");
+                System.out.println("8  - Redo");
+                System.out.println("9  - Passar para o próximo dia");
+                System.out.println("10 - Sair");
                 System.out.print("--> ");
                 break;
             case 1: // Menu de funcionários
@@ -98,8 +166,7 @@ public class Main {
             case 6: // Menu de agendas de pagamento
                 System.out.println("\n-=-=- AGENDAS DE PAGAMENTO -=-=-");
                 System.out.println("1 - Listar Agendas de Pagamento");
-                System.out.println("2 - Cadastrar nova Agenda de Pagamento");
-                System.out.println("3 - Retornar");
+                System.out.println("2 - Retornar");
                 System.out.print("--> ");
                 break;
             default:
@@ -114,11 +181,15 @@ public class Main {
     /* ------------------------------------------------------------------------------------ */
     /* ------------------------------------------------------------------------------------ */
     public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        System.out.print("Data de hoje (dd/mm/aa): ");
+        data_hoje = input.nextLine();
         while(true) {
+            System.out.printf("\nData de hoje: %s", data_hoje);
             menus(0);
-            Scanner input = new Scanner(System.in);
+
             int opcao = input.nextInt();
-            if(opcao == 9) {
+            if(opcao == 10) {
                 System.out.println("\nAté logo!\n");
                 System.exit(0);
             }
@@ -137,8 +208,7 @@ public class Main {
                     taxa_de_servico();
                     break;
                 case 5:
-                    System.out.println("\nRODAR FOLHA DE PAGAMENTOS");
-                    // rodar_folha_de_pagamentos();
+                    rodar_folha_de_pagamentos();
                     break;
                 case 6:
                     agendas_de_pagamento();
@@ -150,6 +220,9 @@ public class Main {
                 case 8:
                     System.out.println("\nREDO");
                     // redo();
+                    break;
+                case 9:
+                    passar_dia();
                     break;
                 default:
                     System.out.println("\nOPÇÃO INVÁLIDA!");
@@ -280,6 +353,101 @@ public class Main {
         System.out.print("--> ");
         entrada = input.nextLine();
         funcs[indice_funcs][12] = entrada;
+
+        String data_final;
+        int int_entrada = Integer.parseInt(entrada);
+        String[] data = data_hoje.split("/");
+        int dia_hoje = Integer.parseInt(data[0]);
+        int mes_hoje = Integer.parseInt(data[1]);
+        int ano_hoje = Integer.parseInt(data[2]);
+
+        if(int_entrada == 1) {
+            if(mes_hoje == 1 || mes_hoje == 3 || mes_hoje == 5 || mes_hoje == 7 || mes_hoje == 8 || mes_hoje == 10) {
+                if(dia_hoje + 7 > 31) {
+                    dia_hoje = (dia_hoje + 7) - 31;
+                    mes_hoje += 1;
+                } else {
+                    dia_hoje = (dia_hoje + 7);
+                }
+            } else if(mes_hoje == 4 || mes_hoje == 6 || mes_hoje == 9 || mes_hoje == 11) {
+                if(dia_hoje + 7 > 30) {
+                    dia_hoje = (dia_hoje + 7) - 30;
+                    mes_hoje += 1;
+                } else {
+                    dia_hoje = (dia_hoje + 7);
+                }
+            } else if(mes_hoje == 2) {
+                if(dia_hoje + 7 > 28) {
+                    dia_hoje = (dia_hoje + 7) - 28;
+                    mes_hoje += 1;
+                } else {
+                    dia_hoje = (dia_hoje + 7);
+                }
+            } else { // Mês == 12
+                if (dia_hoje + 7 > 31) {
+                    dia_hoje = (dia_hoje + 7) - 31;
+                    mes_hoje = 1;
+                    ano_hoje += 1;
+                } else {
+                    dia_hoje = (dia_hoje + 7);
+                }
+            }
+        } else if(int_entrada == 2) {
+            if(mes_hoje == 1 || mes_hoje == 3 || mes_hoje == 5 || mes_hoje == 7 || mes_hoje == 8 || mes_hoje == 10) {
+                if(dia_hoje + 15 > 31) {
+                    dia_hoje = (dia_hoje + 15) - 31;
+                    mes_hoje += 1;
+                } else {
+                    dia_hoje = (dia_hoje + 15);
+                }
+            } else if(mes_hoje == 4 || mes_hoje == 6 || mes_hoje == 9 || mes_hoje == 11) {
+                if(dia_hoje + 15 > 30) {
+                    dia_hoje = (dia_hoje + 15) - 30;
+                    mes_hoje += 1;
+                } else {
+                    dia_hoje = (dia_hoje + 15);
+                }
+            } else if(mes_hoje == 2) {
+                if(dia_hoje + 15 > 28) {
+                    dia_hoje = (dia_hoje + 15) - 28;
+                    mes_hoje += 1;
+                } else {
+                    dia_hoje = (dia_hoje + 15);
+                }
+            } else { // Mês == 12
+                if (dia_hoje + 15 > 31) {
+                    dia_hoje = (dia_hoje + 15) - 31;
+                    mes_hoje = 1;
+                    ano_hoje += 1;
+                } else {
+                    dia_hoje = (dia_hoje + 15);
+                }
+            }
+        } else { // Mensal
+            if(mes_hoje == 12) {
+                mes_hoje = 1;
+                ano_hoje += 1;
+            } else {
+                mes_hoje += 1;
+            }
+        }
+
+        if(mes_hoje < 10) {
+            if (dia_hoje < 10) {
+                data_final = "0" + dia_hoje + "/0" + mes_hoje + "/" + ano_hoje;
+            } else {
+                data_final = dia_hoje + "/0" + mes_hoje + "/" + ano_hoje;
+            }
+        } else {
+            if (dia_hoje < 10) {
+                data_final = "0" + dia_hoje + "/" + mes_hoje + "/" + ano_hoje;
+            } else {
+                data_final = dia_hoje + "/" + mes_hoje + "/" + ano_hoje;
+            }
+        }
+
+        funcs[indice_funcs][13] = data_final;
+        funcs[indice_funcs][14] = "Ainda não efetuado";
 
         indice_funcs++;
 
@@ -498,6 +666,8 @@ public class Main {
         } else {
             System.out.println("Mensal");
         }
+        System.out.printf("Próximo pagamento: %s\n", funcs[indice_funcionario][13]);
+        System.out.printf("Último pagamento: %s\n", funcs[indice_funcionario][14]);
     } // Fim de "imprimir_funcionario"
 
     // Lista todas as informações de todos os funcionários
@@ -548,6 +718,8 @@ public class Main {
                 } else {
                     System.out.println("Mensal");
                 }
+                System.out.printf("Próximo pagamento: %s\n", funcs[i][13]);
+                System.out.printf("Último pagamento: %s\n", funcs[i][14]);
             }
         }
     } // Fim de "listar_funcionario"
@@ -600,9 +772,15 @@ public class Main {
         System.out.print("\nInsira o ID do funcionário: ");
         String id = input.nextLine();
 
+        int id_int = Integer.parseInt(id);
+        if(funcs[id_int - 1][0] == null) {
+            System.out.println("\nFuncionário não cadastrado!");
+            return;
+        }
+
         if(indice_cartoes_ponto != 0) {
             for(int i = 0; i < indice_cartoes_ponto; i++) {
-                if(cartoes_ponto[i][0].equals(id)) {
+                if(cartoes_ponto[i][0].equals(id) && cartoes_ponto[i][1].equals(data_hoje)) {
                     System.out.println("\nFuncionário já bateu ponto de entrada!");
                     return;
                 }
@@ -611,16 +789,14 @@ public class Main {
 
         cartoes_ponto[indice_cartoes_ponto][0] = id;
 
-        System.out.print("Data de entrada (dd/mm/aa): ");
-        String data_entrada = input.nextLine();
-        cartoes_ponto[indice_cartoes_ponto][1] = data_entrada;
+        cartoes_ponto[indice_cartoes_ponto][1] = data_hoje;
 
         System.out.print("Hora de entrada (hh:mm): ");
         String hora_entrada = input.nextLine();
         cartoes_ponto[indice_cartoes_ponto][2] = hora_entrada;
 
         cartoes_ponto[indice_cartoes_ponto][3] = "-1";
-        cartoes_ponto[indice_cartoes_ponto][4] = "-1";
+        cartoes_ponto[indice_cartoes_ponto][4] = "n";
 
         indice_cartoes_ponto++;
     } // Fim de "entrada_cartao_ponto"
@@ -631,16 +807,13 @@ public class Main {
         String id = input.nextLine();
 
         for(int i = 0; i < indice_cartoes_ponto; i++) {
-            if(cartoes_ponto[i][0].equals(id) && cartoes_ponto[i][3].equals("-1")) {
-                System.out.print("Data de saída (dd/mm/aa): ");
-                String data_saida = input.nextLine();
-                cartoes_ponto[i][3] = data_saida;
+            if(cartoes_ponto[i][0].equals(id) && cartoes_ponto[i][3].equals("-1") && cartoes_ponto[i][1].equals(data_hoje)) {
 
                 System.out.print("Hora de saída (hh:mm): ");
                 String hora_saida = input.nextLine();
-                cartoes_ponto[i][4] = hora_saida;
+                cartoes_ponto[i][3] = hora_saida;
                 break;
-            } else {
+            } else if(cartoes_ponto[i][0].equals(id) && !cartoes_ponto[i][3].equals("-1") && cartoes_ponto[i][1].equals(data_hoje)){
                 System.out.println("\nFuncionário já bateu o ponto de saída!");
                 break;
             }
@@ -652,12 +825,11 @@ public class Main {
             System.out.printf("\nID: %s\n", cartoes_ponto[i][0]);
             int id = Integer.parseInt(cartoes_ponto[i][0]);
             System.out.printf("Nome: %s\n", funcs[id - 1][0]);
-            System.out.printf("Data de entrada: %s\n", cartoes_ponto[i][1]);
+            System.out.printf("Data do ponto: %s\n", cartoes_ponto[i][1]);
             System.out.printf("Hora de entrada: %s\n", cartoes_ponto[i][2]);
 
             if(!cartoes_ponto[i][3].equals("-1")) {
-                System.out.printf("Data de saída: %s\n", cartoes_ponto[i][3]);
-                System.out.printf("Hora de saída: %s\n", cartoes_ponto[i][4]);
+                System.out.printf("Hora de saída: %s\n", cartoes_ponto[i][3]);
             }
         }
     } // Fim de "listar_cartoes_ponto"
@@ -694,6 +866,13 @@ public class Main {
         Scanner input = new Scanner(System.in);
         System.out.print("\nInsira o ID do Funcionário: ");
         String id = input.nextLine();
+
+        int id_int = Integer.parseInt(id);
+        if(funcs[id_int - 1][0] == null) {
+            System.out.println("\nFuncionário não cadastrado!");
+            return;
+        }
+
         vendas_realizadas[indice_vendas_realizadas][0] = id;
 
         System.out.print("Valor da venda: R$");
@@ -703,6 +882,8 @@ public class Main {
         System.out.print("Data da venda (dd/mm/aa): ");
         String data = input.nextLine();
         vendas_realizadas[indice_vendas_realizadas][2] = data;
+
+        vendas_realizadas[indice_vendas_realizadas][3] = "n";
 
         indice_vendas_realizadas++;
     } // Fim de "lançar_venda"
@@ -747,10 +928,19 @@ public class Main {
         Scanner input = new Scanner(System.in);
         System.out.print("\nInsira o ID do funcionário: ");
         String id = input.nextLine();
+
+        int id_int = Integer.parseInt(id);
+        if(funcs[id_int - 1][0] == null) {
+            System.out.println("\nFuncionário não cadastrado!");
+            return;
+        }
+
         taxas_de_servicos[indice_taxas_de_servicos][0] = id;
         System.out.print("Valor da taxa: R$");
         String valor_taxa = input.nextLine();
         taxas_de_servicos[indice_taxas_de_servicos][1] = valor_taxa;
+
+        taxas_de_servicos[indice_taxas_de_servicos][2] = "n";
 
         indice_taxas_de_servicos++;
     } // Fim de "lancar_taxa_de_servico"
@@ -777,19 +967,207 @@ public class Main {
             int opc = input.nextInt();
             switch(opc) {
                 case 1:
-                    System.out.println("\nLISTAR AGENDAS DE PAGAMENTO\n");
-                    // listar_agendas_de_pagamento();
+                    listar_agendas_de_pagamento();
                     break;
                 case 2:
-                    System.out.println("\nCADASTRAR AGENDAS DE PAGAMENTO\n");
-                    // cadastrar_agendas_de_pagamento();
-                    break;
-                case 3:
                     return;
                 default:
                     System.out.println("\nOPÇÃO INVÁLIDA!\n");
             }
         }
     } // Fim de "agendas_de_pagamento"
+
+    private static void listar_agendas_de_pagamento() {
+        System.out.println("AGENDAS DE PAGAMENTO");
+        System.out.println("1 - Semanal");
+        System.out.println("2 - Quinzenal");
+        System.out.println("3 - Mensal");
+    }
+
+    /* ------------------------------------------------------------------------------------ */
+    /* ------------------------------------------------------------------------------------ */
+    /* -------------------------------- FOLHA DE PAGAMENTO -------------------------------- */
+    /* ------------------------------------------------------------------------------------ */
+    /* ------------------------------------------------------------------------------------ */
+
+    private static void rodar_folha_de_pagamentos() {
+        System.out.println("\nRODANDO FOLHA DE PAGAMENTOS\n");
+        String[] funcs_pagar_hoje = new String[1000];
+        int k = 0;
+        for(int i = 0; i < indice_funcs; i++) {
+            if(funcs[i][13].equals(data_hoje) && funcs[i][6].equals("s")) {
+                funcs_pagar_hoje[k] = funcs[i][9];
+                k++;
+            }
+        }
+
+        if(k == 0) {
+            System.out.println("Nenhum funcionário para receber hoje!");
+            return;
+        }
+
+        float valor_calculado;
+        for(int j = 0; j < k; j++) {
+            valor_calculado = 0;
+            int id = Integer.parseInt(funcs_pagar_hoje[j]);
+            System.out.printf("Nome: %s\n", funcs[id - 1][0]);
+
+            for(int tax = 0; tax < indice_taxas_de_servicos; tax++) {
+                int id_taxa = Integer.parseInt(taxas_de_servicos[tax][0]);
+                if(id_taxa == id && taxas_de_servicos[tax][2].equals("n")){
+                    valor_calculado -= Float.parseFloat(taxas_de_servicos[tax][1]);
+                    taxas_de_servicos[tax][2] = "s";
+                }
+            }
+
+            if(funcs[id - 1][7].equals("s")) {
+                valor_calculado -= Float.parseFloat(funcs[id - 1][8]);
+            }
+
+            if(funcs[id - 1][2].equals("1")) { // Horário
+                int horas_trabalhadas = 0;
+                for(int pont = 0; pont < indice_cartoes_ponto; pont++) {
+                    int id_ponto = Integer.parseInt(cartoes_ponto[pont][0]);
+                    if(id_ponto == id && cartoes_ponto[pont][4].equals("n") && !cartoes_ponto[pont][3].equals("-1")) {
+                        String[] tempo_entrada = cartoes_ponto[pont][2].split(":");
+                        int hora_entrada = Integer.parseInt(tempo_entrada[0]);
+                        int minuto_entrada = Integer.parseInt(tempo_entrada[1]);
+
+                        String[] tempo_saida = cartoes_ponto[pont][3].split(":");
+                        int hora_saida = Integer.parseInt(tempo_saida[0]);
+                        int minuto_saida = Integer.parseInt(tempo_saida[1]);
+
+                        int tempo_trabalhado = hora_saida - hora_entrada;
+                        if(minuto_saida < minuto_entrada) {
+                            tempo_trabalhado += 1;
+                        }
+                        cartoes_ponto[pont][4] = "s";
+
+                        horas_trabalhadas += tempo_trabalhado;
+                    }
+                }
+
+                valor_calculado += (horas_trabalhadas * Float.parseFloat(funcs[id - 1][3]));
+
+            } else if(funcs[id - 1][2].equals("2")) { // Assalariado
+
+                valor_calculado += Float.parseFloat(funcs[id - 1][4]);
+
+            } else { // Comissionado
+
+                valor_calculado += Float.parseFloat(funcs[id - 1][4]);
+
+                for(int vend = 0; vend < indice_vendas_realizadas; vend++) {
+                    int id_vend = Integer.parseInt(vendas_realizadas[vend][0]);
+                    if(id_vend == id && vendas_realizadas[vend][3].equals("n")) {
+                        float comissao = Float.parseFloat(funcs[id - 1][5]);
+                        float valor_venda = Float.parseFloat(vendas_realizadas[vend][1]);
+                        valor_calculado += ((comissao / 100) * valor_venda);
+                        vendas_realizadas[vend][3] = "s";
+                    }
+                }
+            }
+
+            System.out.printf("Valor a receber: R$%.2f\n", valor_calculado);
+
+            funcs[id - 1][14] = funcs[id - 1][13];
+
+            String data_final;
+            int int_entrada = Integer.parseInt(funcs[id - 1][12]);
+            String[] data = data_hoje.split("/");
+            int dia_hoje = Integer.parseInt(data[0]);
+            int mes_hoje = Integer.parseInt(data[1]);
+            int ano_hoje = Integer.parseInt(data[2]);
+
+            if(int_entrada == 1) {
+                if(mes_hoje == 1 || mes_hoje == 3 || mes_hoje == 5 || mes_hoje == 7 || mes_hoje == 8 || mes_hoje == 10) {
+                    if(dia_hoje + 7 > 31) {
+                        dia_hoje = (dia_hoje + 7) - 31;
+                        mes_hoje += 1;
+                    } else {
+                        dia_hoje = (dia_hoje + 7);
+                    }
+                } else if(mes_hoje == 4 || mes_hoje == 6 || mes_hoje == 9 || mes_hoje == 11) {
+                    if(dia_hoje + 7 > 30) {
+                        dia_hoje = (dia_hoje + 7) - 30;
+                        mes_hoje += 1;
+                    } else {
+                        dia_hoje = (dia_hoje + 7);
+                    }
+                } else if(mes_hoje == 2) {
+                    if(dia_hoje + 7 > 28) {
+                        dia_hoje = (dia_hoje + 7) - 28;
+                        mes_hoje += 1;
+                    } else {
+                        dia_hoje = (dia_hoje + 7);
+                    }
+                } else { // Mês == 12
+                    if (dia_hoje + 7 > 31) {
+                        dia_hoje = (dia_hoje + 7) - 31;
+                        mes_hoje = 1;
+                        ano_hoje += 1;
+                    } else {
+                        dia_hoje = (dia_hoje + 7);
+                    }
+                }
+            } else if(int_entrada == 2) {
+                if(mes_hoje == 1 || mes_hoje == 3 || mes_hoje == 5 || mes_hoje == 7 || mes_hoje == 8 || mes_hoje == 10) {
+                    if(dia_hoje + 15 > 31) {
+                        dia_hoje = (dia_hoje + 15) - 31;
+                        mes_hoje += 1;
+                    } else {
+                        dia_hoje = (dia_hoje + 15);
+                    }
+                } else if(mes_hoje == 4 || mes_hoje == 6 || mes_hoje == 9 || mes_hoje == 11) {
+                    if(dia_hoje + 15 > 30) {
+                        dia_hoje = (dia_hoje + 15) - 30;
+                        mes_hoje += 1;
+                    } else {
+                        dia_hoje = (dia_hoje + 15);
+                    }
+                } else if(mes_hoje == 2) {
+                    if(dia_hoje + 15 > 28) {
+                        dia_hoje = (dia_hoje + 15) - 28;
+                        mes_hoje += 1;
+                    } else {
+                        dia_hoje = (dia_hoje + 15);
+                    }
+                } else { // Mês == 12
+                    if (dia_hoje + 15 > 31) {
+                        dia_hoje = (dia_hoje + 15) - 31;
+                        mes_hoje = 1;
+                        ano_hoje += 1;
+                    } else {
+                        dia_hoje = (dia_hoje + 15);
+                    }
+                }
+            } else {
+                if(mes_hoje == 12) {
+                    mes_hoje = 1;
+                    ano_hoje += 1;
+                } else {
+                    mes_hoje += 1;
+                }
+            }
+
+            if(mes_hoje < 10) {
+                if (dia_hoje < 10) {
+                    data_final = "0" + dia_hoje + "/0" + mes_hoje + "/" + ano_hoje;
+                } else {
+                    data_final = dia_hoje + "/0" + mes_hoje + "/" + ano_hoje;
+                }
+            } else {
+                if (dia_hoje < 10) {
+                    data_final = "0" + dia_hoje + "/" + mes_hoje + "/" + ano_hoje;
+                } else {
+                    data_final = dia_hoje + "/" + mes_hoje + "/" + ano_hoje;
+                }
+            }
+
+            funcs[id - 1][13] = data_final;
+        }
+
+    } // Fim de Rodar Folha de Pagamentos
+
 
 } // Fim da Classe Main
