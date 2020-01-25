@@ -1,5 +1,6 @@
 package FolhaDePagamento;
 
+import javax.sound.midi.SysexMessage;
 import java.util.Scanner;
 
 public class Main {
@@ -111,6 +112,7 @@ public class Main {
         rodar_folha_de_pagamentos();
 
     } // Fim de Passar Dia
+
     /* ----------------------------------------------------------------------------------- */
     /* ----------------------------------------------------------------------------------- */
     /* -------------------------------------- MENUS -------------------------------------- */
@@ -182,13 +184,43 @@ public class Main {
     /* ------------------------------------------------------------------------------------ */
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
-        System.out.print("Data de hoje (dd/mm/aa): ");
-        data_hoje = input.nextLine();
+        String data_entrada;
+        while(true) {
+            System.out.print("Data de hoje (dd/mm/aa): ");
+            data_entrada = input.nextLine();
+            if(data_entrada.length() == 8) {
+                String[] data_entrada_split = data_entrada.split("/");
+                if(data_entrada_split.length == 3) {
+                    break;
+                } else {
+                    System.out.println("Formato inválido!");
+                }
+            } else {
+                System.out.println("Entrada inválida!");
+            }
+        }
+        data_hoje = data_entrada;
+
         while(true) {
             System.out.printf("\nData de hoje: %s", data_hoje);
             menus(0);
 
-            int opcao = input.nextInt();
+            String opc;
+            while(true){
+                opc = input.nextLine();
+                try {
+                    int opcao_int = Integer.parseInt(opc);
+                    if(opcao_int > 0 && opcao_int < 11) {
+                        break;
+                    } else {
+                        System.out.print("Valor inválido, tente novamente!\n--> ");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Apenas números!\n--> ");
+                }
+            }
+            int opcao = Integer.parseInt(opc);
+
             if(opcao == 10) {
                 System.out.println("\nAté logo!\n");
                 System.exit(0);
@@ -243,7 +275,22 @@ public class Main {
         while(true) {
             menus(1);
             Scanner input = new Scanner(System.in);
-            int opc = input.nextInt();
+            String opcao;
+            while(true){
+                opcao = input.nextLine();
+                try {
+                    int opcao_int = Integer.parseInt(opcao);
+                    if(opcao_int > 0 && opcao_int < 6) {
+                        break;
+                    } else {
+                        System.out.print("Valor inválido, tente novamente!\n--> ");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Apenas números!\n--> ");
+                }
+            }
+            int opc = Integer.parseInt(opcao);
+
             switch(opc) {
                 case 1:
                     adicionar_funcionario();
@@ -270,42 +317,122 @@ public class Main {
         Scanner input = new Scanner(System.in);
 
         String entrada;
-        System.out.print("\nNome: ");
-        entrada = input.nextLine();
+        while(true) {
+            System.out.print("\nNome: ");
+            entrada = input.nextLine();
+            if(!entrada.isEmpty()) {
+                break;
+            } else {
+                System.out.print("Nome inválido!");
+            }
+        }
         funcs[indice_funcs][0] = entrada;
 
-        System.out.print("Endereço: ");
-        entrada = input.nextLine();
+        while(true) {
+            System.out.print("Endereço: ");
+            entrada = input.nextLine();
+            if(!entrada.isEmpty()) {
+                break;
+            } else {
+                System.out.println("Endereço inválido!");
+            }
+        }
         funcs[indice_funcs][1] = entrada;
 
-        System.out.println("Tipo de funcionário: ");
-        System.out.println("1 - Horário");
-        System.out.println("2 - Assalariado");
-        System.out.println("3 - Comissionado");
-        System.out.print("--> ");
-        entrada = input.nextLine();
+        while(true) {
+            int int_entrada;
+            System.out.println("Tipo de funcionário: ");
+            System.out.println("1 - Horário");
+            System.out.println("2 - Assalariado");
+            System.out.println("3 - Comissionado");
+            System.out.print("--> ");
+            entrada = input.nextLine();
+            try {
+                int_entrada = Integer.parseInt(entrada);
+                if(int_entrada > 0 && int_entrada < 4) {
+                    break;
+                } else {
+                    System.out.println("Opção inválida!");
+                }
+            } catch (NumberFormatException e){
+                System.out.println("Apenas números!");
+            }
+        }
         funcs[indice_funcs][2] = entrada;
 
         switch(entrada) {
             case "1":
-                System.out.print("Valor da hora: R$");
-                String valor_hora = input.nextLine();
+                String valor_hora;
+                while(true) {
+                    System.out.print("Valor da hora: R$");
+                    valor_hora = input.nextLine();
+                    try {
+                        float valor_hora_float = Float.parseFloat(valor_hora);
+                        if(valor_hora_float > 0) {
+                            break;
+                        } else {
+                            System.out.println("Valor da hora não pode ser menor ou igual a 0!");
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Apenas números ou pontos flutuantes!");
+                    }
+                }
                 funcs[indice_funcs][3] = valor_hora;
                 funcs[indice_funcs][4] = "-1";
                 funcs[indice_funcs][5] = "-1";
                 break;
             case "2":
-                System.out.print("Salário: R$");
-                String salario = input.nextLine();
+                String salario;
+                while(true) {
+                    System.out.print("Salário: R$");
+                    salario = input.nextLine();
+                    try {
+                        float salario_float = Float.parseFloat(salario);
+                        if(salario_float > 0) {
+                            break;
+                        } else {
+                            System.out.println("Salário não pode menor ou igual a 0!");
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Apenas números ou pontos flutuantes!");
+                    }
+                }
                 funcs[indice_funcs][3] = "-1";
                 funcs[indice_funcs][4] = salario;
                 funcs[indice_funcs][5] = "-1";
                 break;
             case "3":
-                System.out.print("Salário: R$");
-                String sal = input.nextLine();
-                System.out.print("Comissão (sem '%'): ");
-                String comissao = input.nextLine();
+                String sal;
+                while(true) {
+                    System.out.print("Salário: R$");
+                    sal = input.nextLine();
+                    try {
+                        float sal_float = Float.parseFloat(sal);
+                        if (sal_float > 0) {
+                            break;
+                        } else {
+                            System.out.println("Salário não pode ser menor ou igual a 0!");
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Apenas números ou pontos flutuantes!");
+                    }
+                }
+
+                String comissao;
+                while(true) {
+                    System.out.print("Comissão (sem '%'): ");
+                    comissao = input.nextLine();
+                    try {
+                        float comissao_float = Float.parseFloat(comissao);
+                        if(comissao_float > 0) {
+                            break;
+                        } else {
+                            System.out.println("Comissão não pode ser menor ou igual a 0!");
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Apenas números ou pontos flutuantes!");
+                    }
+                }
                 funcs[indice_funcs][3] = "-1";
                 funcs[indice_funcs][4] = sal;
                 funcs[indice_funcs][5] = comissao;
@@ -314,13 +441,35 @@ public class Main {
 
         funcs[indice_funcs][6] = "s";
 
-        System.out.print("Pertence a Sindicato (s/n): ");
-        entrada = input.nextLine();
+        while(true) {
+            System.out.print("Pertence a Sindicato (s/n): ");
+            entrada = input.nextLine();
+            if(entrada.length() > 1 || (!entrada.equals("s") && !entrada.equals("n"))) {
+                System.out.println("Apenas \"s\" ou \"n\"!");
+            }
+            else {
+                break;
+            }
+        }
         funcs[indice_funcs][7] = entrada;
 
         if(entrada.equals("s")) {
-            System.out.print("Taxa do Sindicato: R$");
-            String taxa_sindicato = input.nextLine();
+            String taxa_sindicato;
+            while(true) {
+                System.out.print("Taxa do Sindicato: R$");
+                taxa_sindicato = input.nextLine();
+                try {
+                    float taxa_sindicat_float = Float.parseFloat(taxa_sindicato);
+                    if(taxa_sindicat_float > 0) {
+                        break;
+                    } else {
+                        System.out.println("A taxa do sindicato não pode ser menor ou igual a 0!");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Apenas números ou pontos flutuantes!");
+                }
+            }
+
             funcs[indice_funcs][8] = taxa_sindicato;
         } else {
             funcs[indice_funcs][8] = "-1";
@@ -328,30 +477,66 @@ public class Main {
 
         funcs[indice_funcs][9] = Integer.toString(indice_funcs + 1);
 
-        System.out.print("Forma de pagamento:\n");
-        System.out.print("1 - Depósito bancário\n");
-        System.out.print("2 - Cheque em mãos\n");
-        System.out.print("3 - Cheque pelos correios\n");
-        System.out.print("--> ");
-        entrada = input.nextLine();
+        while(true) {
+            System.out.print("Forma de pagamento:\n");
+            System.out.print("1 - Depósito bancário\n");
+            System.out.print("2 - Cheque em mãos\n");
+            System.out.print("3 - Cheque pelos correios\n");
+            System.out.print("--> ");
+            entrada = input.nextLine();
+            try {
+                int int_entrada = Integer.parseInt(entrada);
+                if(int_entrada > 0 && int_entrada < 4){
+                    break;
+                } else {
+                    System.out.println("Valor inválido!");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Apenas números!");
+            }
+        }
         funcs[indice_funcs][10] = entrada;
 
-        System.out.print("Dia preferido de pagamento:\n");
-        System.out.print("2 - Segunda\n");
-        System.out.print("3 - Terça\n");
-        System.out.print("4 - Quarta\n");
-        System.out.print("5 - Quinta\n");
-        System.out.print("6 - Sexta\n");
-        System.out.print("--> ");
-        entrada = input.nextLine();
+        while(true) {
+            System.out.print("Dia preferido de pagamento:\n");
+            System.out.print("2 - Segunda\n");
+            System.out.print("3 - Terça\n");
+            System.out.print("4 - Quarta\n");
+            System.out.print("5 - Quinta\n");
+            System.out.print("6 - Sexta\n");
+            System.out.print("--> ");
+            entrada = input.nextLine();
+            try {
+                int int_entrada = Integer.parseInt(entrada);
+                if(int_entrada > 1 && int_entrada < 7) {
+                    break;
+                } else {
+                    System.out.println("Valor inválido!");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Apenas números!");
+            }
+        }
         funcs[indice_funcs][11] = entrada;
 
-        System.out.print("Tipo de pagamento:\n");
-        System.out.print("1 - Semanal\n");
-        System.out.print("2 - Quinzenal\n");
-        System.out.print("3 - Mensal\n");
-        System.out.print("--> ");
-        entrada = input.nextLine();
+        while(true) {
+            System.out.print("Tipo de pagamento:\n");
+            System.out.print("1 - Semanal\n");
+            System.out.print("2 - Quinzenal\n");
+            System.out.print("3 - Mensal\n");
+            System.out.print("--> ");
+            entrada = input.nextLine();
+            try {
+                int int_entrada = Integer.parseInt(entrada);
+                if(int_entrada > 0 && int_entrada < 4) {
+                    break;
+                } else {
+                    System.out.println("Valor inválido!");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Apenas números!");
+            }
+        }
         funcs[indice_funcs][12] = entrada;
 
         String data_final;
@@ -468,7 +653,15 @@ public class Main {
 
         System.out.print("\nConfirmar remoção de funcionário? (s/n) ");
         Scanner input = new Scanner(System.in);
-        String confirmar = input.nextLine();
+        String confirmar;
+        while(true) {
+            confirmar = input.nextLine();
+            if(confirmar.length() > 1 || (!confirmar.equals("s") && !confirmar.equals("n"))) {
+                System.out.println("Entrada inválida!");
+            } else {
+                break;
+            }
+        }
         if(confirmar.equals("s")) {
             funcs[indice_funcionario][6] = "n";
         }
@@ -502,106 +695,249 @@ public class Main {
         Scanner input = new Scanner(System.in);
         switch(opcao) {
             case 1:
-                System.out.print("\nNovo nome: ");
-                String novo_nome = input.nextLine();
+                String novo_nome;
+                while(true) {
+                    System.out.print("\nNovo nome: ");
+                    novo_nome = input.nextLine();
+                    if(!novo_nome.isEmpty()) {
+                        break;
+                    } else {
+                        System.out.print("Nome inválido!");
+                    }
+                }
                 funcs[indice_funcionario][0] = novo_nome;
 
                 System.out.println("\nNome alterado com sucesso!");
                 break;
             case 2:
-                System.out.print("\nNovo endereço: ");
-                String novo_endereco = input.nextLine();
+                String novo_endereco;
+                while(true) {
+                    System.out.print("\nNovo endereço: ");
+                    novo_endereco = input.nextLine();
+                    if(!novo_endereco.isEmpty()) {
+                        break;
+                    } else {
+                        System.out.print("Endereço inválido!");
+                    }
+                }
                 funcs[indice_funcionario][1] = novo_endereco;
 
                 System.out.println("\nEndereço alterado com sucesso!");
                 break;
             case 3:
-                System.out.println("\nNovo tipo de funcionário:");
-                System.out.println("1 - Horário");
-                System.out.println("2 - Assalariado");
-                System.out.println("3 - Comissionado");
-                System.out.print("--> ");
-                String novo_tipo = input.nextLine();
+                String novo_tipo;
+                while(true) {
+                    int int_novo_tipo;
+                    System.out.println("Novo tipo de funcionário: ");
+                    System.out.println("1 - Horário");
+                    System.out.println("2 - Assalariado");
+                    System.out.println("3 - Comissionado");
+                    System.out.print("--> ");
+                    novo_tipo = input.nextLine();
+                    try {
+                        int_novo_tipo = Integer.parseInt(novo_tipo);
+                        if(int_novo_tipo > 0 && int_novo_tipo < 4) {
+                            break;
+                        } else {
+                            System.out.println("Opção inválida!");
+                        }
+                    } catch (NumberFormatException e){
+                        System.out.println("Apenas números!");
+                    }
+                }
                 funcs[indice_funcionario][2] = novo_tipo;
                 switch(novo_tipo) {
                     case "1":
-                        System.out.print("Novo valor da hora: R$");
-                        String valor_hora = input.nextLine();
-                        funcs[indice_funcionario][3] = valor_hora;
+                        String novo_valor_hora;
+                        while(true) {
+                            System.out.print("Novo valor da hora: R$");
+                            novo_valor_hora = input.nextLine();
+                            try {
+                                float valor_hora_float = Float.parseFloat(novo_valor_hora);
+                                if(valor_hora_float > 0) {
+                                    break;
+                                } else {
+                                    System.out.println("Valor da hora não pode ser menor ou igual a 0!");
+                                }
+                            } catch (NumberFormatException e) {
+                                System.out.println("Apenas números ou pontos flutuantes!");
+                            }
+                        }
+                        funcs[indice_funcionario][3] = novo_valor_hora;
                         funcs[indice_funcionario][4] = "-1";
                         funcs[indice_funcionario][5] = "-1";
                         break;
                     case "2":
-                        System.out.print("Novo salário: R$");
-                        String salario = input.nextLine();
+                        String novo_salario;
+                        while(true) {
+                            System.out.print("Salário: R$");
+                            novo_salario = input.nextLine();
+                            try {
+                                float salario_float = Float.parseFloat(novo_salario);
+                                if(salario_float > 0) {
+                                    break;
+                                } else {
+                                    System.out.println("Salário não pode menor ou igual a 0!");
+                                }
+                            } catch (NumberFormatException e) {
+                                System.out.println("Apenas números ou pontos flutuantes!");
+                            }
+                        }
                         funcs[indice_funcionario][3] = "-1";
-                        funcs[indice_funcionario][4] = salario;
+                        funcs[indice_funcionario][4] = novo_salario;
                         funcs[indice_funcionario][5] = "-1";
                         break;
                     case "3":
-                        System.out.print("Novo salário: R$");
-                        String sal = input.nextLine();
-                        System.out.print("Nova comissão (sem '%'): ");
-                        String comissao = input.nextLine();
+                        String novo_sal;
+                        while(true) {
+                            System.out.print("Salário: R$");
+                            novo_sal = input.nextLine();
+                            try {
+                                float sal_float = Float.parseFloat(novo_sal);
+                                if (sal_float > 0) {
+                                    break;
+                                } else {
+                                    System.out.println("Salário não pode ser menor ou igual a 0!");
+                                }
+                            } catch (NumberFormatException e) {
+                                System.out.println("Apenas números ou pontos flutuantes!");
+                            }
+                        }
+
+                        String nova_comissao;
+                        while(true) {
+                            System.out.print("Comissão (sem '%'): ");
+                            nova_comissao = input.nextLine();
+                            try {
+                                float comissao_float = Float.parseFloat(nova_comissao);
+                                if(comissao_float > 0) {
+                                    break;
+                                } else {
+                                    System.out.println("Comissão não pode ser menor ou igual a 0!");
+                                }
+                            } catch (NumberFormatException e) {
+                                System.out.println("Apenas números ou pontos flutuantes!");
+                            }
+                        }
                         funcs[indice_funcionario][3] = "-1";
-                        funcs[indice_funcionario][4] = sal;
-                        funcs[indice_funcionario][5] = comissao;
+                        funcs[indice_funcionario][4] = novo_sal;
+                        funcs[indice_funcionario][5] = nova_comissao;
                         break;
                 }
 
                 System.out.println("\nTipo de funcionário alterado com sucesso!");
                 break;
             case 4:
-                System.out.print("\nPertence a sindicato? (s/n) ");
-                String sindicato = input.nextLine();
-                if(sindicato.equals("s")) {
+
+                String novo_sindicato;
+                while(true) {
+                    System.out.print("\nPertence a sindicato? (s/n) ");
+                    novo_sindicato = input.nextLine();
+                    if(novo_sindicato.length() > 1 || (!novo_sindicato.equals("s") && !novo_sindicato.equals("n"))) {
+                        System.out.println("Apenas \"s\" ou \"n\"!");
+                    } else {
+                        break;
+                    }
+                }
+                if(novo_sindicato.equals("s")) {
                     Scanner in = new Scanner(System.in);
+                    String taxa_sindicato;
                     funcs[indice_funcionario][7] = "s";
-                    System.out.print("Taxa de sindicato: R$");
-                    String taxa_sindicato = in.nextLine();
+                    while(true) {
+                        System.out.print("Taxa de sindicato: R$");
+                        taxa_sindicato = in.nextLine();
+                        try {
+                            float int_taxa_sindicato = Float.parseFloat(taxa_sindicato);
+                            if(int_taxa_sindicato > 0) {
+                                break;
+                            } else {
+                                System.out.println("Taxa do sindicato não pode ser menor ou igual a 0!");
+                            }
+                        } catch (NumberFormatException e) {
+                            System.out.println("Apenas números ou pontos flutuantes!");
+                        }
+                    }
                     funcs[indice_funcionario][8] = taxa_sindicato;
                 } else {
                     funcs[indice_funcionario][7] = "n";
                     funcs[indice_funcionario][8] = "-1";
                 }
-
                 System.out.println("\nSindicato alterado com sucesso!");
                 break;
             case 5:
                 Scanner in = new Scanner(System.in);
-                System.out.print("Forma de pagamento:\n");
-                System.out.print("1 - Depósito bancário\n");
-                System.out.print("2 - Cheque em mãos\n");
-                System.out.print("3 - Cheque pelos correios\n");
-                System.out.print("--> ");
-                String nova_forma = in.nextLine();
+                String nova_forma;
+                while(true) {
+                    System.out.print("Forma de pagamento:\n");
+                    System.out.print("1 - Depósito bancário\n");
+                    System.out.print("2 - Cheque em mãos\n");
+                    System.out.print("3 - Cheque pelos correios\n");
+                    System.out.print("--> ");
+                    nova_forma = in.nextLine();
+                    try {
+                        int int_nova_forma = Integer.parseInt(nova_forma);
+                        if(int_nova_forma > 0 && int_nova_forma < 4) {
+                            break;
+                        } else {
+                            System.out.println("Opção inválida!");
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Apenas números!");
+                    }
+                }
                 funcs[indice_funcionario][10] = nova_forma;
 
                 System.out.println("\nForma de pagamento alterada com sucesso!");
                 break;
             case 6:
                 Scanner inp = new Scanner(System.in);
-                System.out.print("Dia preferido de pagamento:\n");
-                System.out.print("2 - Segunda\n");
-                System.out.print("3 - Terça\n");
-                System.out.print("4 - Quarta\n");
-                System.out.print("5 - Quinta\n");
-                System.out.print("6 - Sexta\n");
-                System.out.print("--> ");
-                String novo_dia_preferido = inp.nextLine();
+                String novo_dia_preferido;
+                while(true) {
+                    System.out.print("Dia preferido de pagamento:\n");
+                    System.out.print("2 - Segunda\n");
+                    System.out.print("3 - Terça\n");
+                    System.out.print("4 - Quarta\n");
+                    System.out.print("5 - Quinta\n");
+                    System.out.print("6 - Sexta\n");
+                    System.out.print("--> ");
+                    novo_dia_preferido = inp.nextLine();
+                    try {
+                        int int_novo_dia_preferido = Integer.parseInt(novo_dia_preferido);
+                        if(int_novo_dia_preferido > 1 && int_novo_dia_preferido < 7) {
+                            break;
+                        } else {
+                            System.out.println("Opção inválida!");
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Apenas números!");
+                    }
+                }
                 funcs[indice_funcionario][11] = novo_dia_preferido;
 
                 System.out.println("\nDia preferido de pagamento alterado com sucesso!");
                 break;
             case 7:
                 Scanner inpu = new Scanner(System.in);
-                System.out.print("Tipo de pagamento:\n");
-                System.out.print("1 - Semanal\n");
-                System.out.print("2 - Quinzenal\n");
-                System.out.print("3 - Mensal\n");
-                System.out.print("--> ");
-                String novo_tipo_pagamento = inpu.nextLine();
-                funcs[indice_funcs][12] = novo_tipo_pagamento;
+                String novo_tipo_pagamento;
+                while(true) {
+                    System.out.print("Tipo de pagamento:\n");
+                    System.out.print("1 - Semanal\n");
+                    System.out.print("2 - Quinzenal\n");
+                    System.out.print("3 - Mensal\n");
+                    System.out.print("--> ");
+                    novo_tipo_pagamento = inpu.nextLine();
+                    try {
+                        int int_novo_tipo_pagamento = Integer.parseInt(novo_tipo_pagamento);
+                        if(int_novo_tipo_pagamento > 0 && int_novo_tipo_pagamento < 4) {
+                            break;
+                        } else {
+                            System.out.println("Opção inválida!");
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Apenas números!");
+                    }
+                }
+                funcs[indice_funcionario][12] = novo_tipo_pagamento;
 
                 System.out.println("\nTipo de pagamento alterado com sucesso!");
                 break;
@@ -610,9 +946,16 @@ public class Main {
         }
 
         Scanner in = new Scanner(System.in);
-        System.out.print("\nDeseja editar algo mais? (s/n) ");
-        String continuar = in.nextLine();
-
+        String continuar;
+        while(true) {
+            System.out.print("\nDeseja editar algo mais? (s/n) ");
+            continuar = in.nextLine();
+            if(continuar.length() > 1 || (!continuar.equals("s") && !continuar.equals("n"))) {
+                System.out.println("Apenas \"s\" ou \"n\"!");
+            } else {
+                break;
+            }
+        }
         if(continuar.equals("s")) {
             editar_funcionario(indice_funcionario);
         }
@@ -728,8 +1071,23 @@ public class Main {
     private static int localizar_funcionario() {
 
         Scanner input = new Scanner(System.in);
-        System.out.print("\nInsira o ID do funcionário: ");
-        int id = input.nextInt();
+        String id_string;
+        while(true) {
+            System.out.print("\nInsira o ID do funcionário: ");
+            id_string = input.nextLine();
+            try {
+                int int_id = Integer.parseInt(id_string);
+                if(int_id > 0) {
+                    break;
+                } else {
+                    System.out.println("ID não pode ser menor ou igual a 0!");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Apenas números!");
+            }
+        }
+
+        int id = Integer.parseInt(id_string);
         if(id <= indice_funcs) {
             return id - 1; // Retorna o índice do funcionário no array
         } else {
@@ -748,7 +1106,22 @@ public class Main {
         while(true) {
             menus(2);
             Scanner input = new Scanner(System.in);
-            int opc = input.nextInt();
+            String opcao;
+            while(true){
+                opcao = input.nextLine();
+                try {
+                    int opcao_int = Integer.parseInt(opcao);
+                    if(opcao_int > 0 && opcao_int < 5) {
+                        break;
+                    } else {
+                        System.out.print("Valor inválido, tente novamente!\n--> ");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Apenas números!\n--> ");
+                }
+            }
+            int opc = Integer.parseInt(opcao);
+
             switch(opc) {
                 case 1:
                     entrada_cartao_ponto();
@@ -769,10 +1142,23 @@ public class Main {
 
     private static void entrada_cartao_ponto() {
         Scanner input = new Scanner(System.in);
-        System.out.print("\nInsira o ID do funcionário: ");
-        String id = input.nextLine();
+        String id_string;
+        while(true) {
+            System.out.print("\nInsira o ID do funcionário: ");
+            id_string = input.nextLine();
+            try {
+                int int_id = Integer.parseInt(id_string);
+                if(int_id > 0) {
+                    break;
+                } else {
+                    System.out.println("ID não pode ser menor ou igual a 0!");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Apenas números!");
+            }
+        }
 
-        int id_int = Integer.parseInt(id);
+        int id_int = Integer.parseInt(id_string);
         if(funcs[id_int - 1][0] == null) {
             System.out.println("\nFuncionário não cadastrado!");
             return;
@@ -780,19 +1166,39 @@ public class Main {
 
         if(indice_cartoes_ponto != 0) {
             for(int i = 0; i < indice_cartoes_ponto; i++) {
-                if(cartoes_ponto[i][0].equals(id) && cartoes_ponto[i][1].equals(data_hoje)) {
+                if(cartoes_ponto[i][0].equals(id_string) && cartoes_ponto[i][1].equals(data_hoje)) {
                     System.out.println("\nFuncionário já bateu ponto de entrada!");
                     return;
                 }
             }
         }
 
-        cartoes_ponto[indice_cartoes_ponto][0] = id;
+        cartoes_ponto[indice_cartoes_ponto][0] = id_string;
 
         cartoes_ponto[indice_cartoes_ponto][1] = data_hoje;
 
-        System.out.print("Hora de entrada (hh:mm): ");
-        String hora_entrada = input.nextLine();
+        String hora_entrada;
+        while(true) {
+            System.out.print("Hora de entrada (hh:mm): ");
+            hora_entrada = input.nextLine();
+            String[] hora_dividida = hora_entrada.split(":");
+            if(hora_dividida.length == 2) {
+                try {
+                    int int_hora = Integer.parseInt(hora_dividida[0]);
+                    int int_minuto = Integer.parseInt(hora_dividida[1]);
+                    if((int_hora >= 0 && int_hora <= 23) && (int_minuto >= 0 && int_minuto <= 59)) {
+                        break;
+                    } else {
+                        System.out.println("Hora inválida!");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Apenas números e \":\"!");
+                }
+            } else {
+                System.out.println("Formato inválido!");
+            }
+        }
+
         cartoes_ponto[indice_cartoes_ponto][2] = hora_entrada;
 
         cartoes_ponto[indice_cartoes_ponto][3] = "-1";
@@ -803,17 +1209,49 @@ public class Main {
 
     private static void saida_cartao_ponto() {
         Scanner input = new Scanner(System.in);
-        System.out.print("\nInsira o ID do funcionário: ");
-        String id = input.nextLine();
+        String id_string;
+        while(true) {
+            System.out.print("\nInsira o ID do funcionário: ");
+            id_string = input.nextLine();
+            try {
+                int int_id = Integer.parseInt(id_string);
+                if(int_id > 0) {
+                    break;
+                } else {
+                    System.out.println("ID não pode ser menor ou igual a 0!");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Apenas números!");
+            }
+        }
 
         for(int i = 0; i < indice_cartoes_ponto; i++) {
-            if(cartoes_ponto[i][0].equals(id) && cartoes_ponto[i][3].equals("-1") && cartoes_ponto[i][1].equals(data_hoje)) {
+            if(cartoes_ponto[i][0].equals(id_string) && cartoes_ponto[i][3].equals("-1") && cartoes_ponto[i][1].equals(data_hoje)) {
 
-                System.out.print("Hora de saída (hh:mm): ");
-                String hora_saida = input.nextLine();
+                String hora_saida;
+                while(true) {
+                    System.out.print("Hora de saída (hh:mm): ");
+                    hora_saida = input.nextLine();
+                    String[] hora_dividida = hora_saida.split(":");
+                    if(hora_dividida.length == 2) {
+                        try {
+                            int int_hora = Integer.parseInt(hora_dividida[0]);
+                            int int_minuto = Integer.parseInt(hora_dividida[1]);
+                            if((int_hora >= 0 && int_hora <= 23) && (int_minuto >= 0 && int_minuto <= 59)) {
+                                break;
+                            } else {
+                                System.out.println("Hora inválida!");
+                            }
+                        } catch (NumberFormatException e) {
+                            System.out.println("Apenas números e \":\"!");
+                        }
+                    } else {
+                        System.out.println("Formato inválido!");
+                    }
+                }
                 cartoes_ponto[i][3] = hora_saida;
                 break;
-            } else if(cartoes_ponto[i][0].equals(id) && !cartoes_ponto[i][3].equals("-1") && cartoes_ponto[i][1].equals(data_hoje)){
+            } else if(cartoes_ponto[i][0].equals(id_string) && !cartoes_ponto[i][3].equals("-1") && cartoes_ponto[i][1].equals(data_hoje)){
                 System.out.println("\nFuncionário já bateu o ponto de saída!");
                 break;
             }
@@ -844,7 +1282,22 @@ public class Main {
         while(true) {
             menus(3);
             Scanner input = new Scanner(System.in);
-            int opc = input.nextInt();
+            String opcao;
+            while(true){
+                opcao = input.nextLine();
+                try {
+                    int opcao_int = Integer.parseInt(opcao);
+                    if(opcao_int > 0 && opcao_int < 4) {
+                        break;
+                    } else {
+                        System.out.print("Valor inválido, tente novamente!\n--> ");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Apenas números!\n--> ");
+                }
+            }
+            int opc = Integer.parseInt(opcao);
+
             switch(opc) {
                 case 1:
                     // System.out.println("\nLANÇAR VENDA\n");
@@ -864,23 +1317,73 @@ public class Main {
 
     private static void lancar_venda() {
         Scanner input = new Scanner(System.in);
-        System.out.print("\nInsira o ID do Funcionário: ");
-        String id = input.nextLine();
+        String id_string;
+        while(true) {
+            System.out.print("\nInsira o ID do funcionário: ");
+            id_string = input.nextLine();
+            try {
+                int int_id = Integer.parseInt(id_string);
+                if(int_id > 0) {
+                    break;
+                } else {
+                    System.out.println("ID não pode ser menor ou igual a 0!");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Apenas números!");
+            }
+        }
 
-        int id_int = Integer.parseInt(id);
+        int id_int = Integer.parseInt(id_string);
         if(funcs[id_int - 1][0] == null) {
             System.out.println("\nFuncionário não cadastrado!");
             return;
         }
 
-        vendas_realizadas[indice_vendas_realizadas][0] = id;
+        vendas_realizadas[indice_vendas_realizadas][0] = id_string;
 
-        System.out.print("Valor da venda: R$");
-        String valor = input.nextLine();
+        String valor;
+        while(true) {
+            System.out.print("Valor da venda: R$");
+            valor = input.nextLine();
+            try {
+                float float_valor = Float.parseFloat(valor);
+                if(float_valor > 0) {
+                    break;
+                } else {
+                    System.out.println("Valor da venda não pode ser menor ou igual a 0!");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Apenas números ou pontos flutuantes!");
+            }
+        }
         vendas_realizadas[indice_vendas_realizadas][1] = valor;
 
-        System.out.print("Data da venda (dd/mm/aa): ");
-        String data = input.nextLine();
+        String data;
+        while(true) {
+            System.out.print("Data da venda (dd/mm/aa): ");
+            data = input.nextLine();
+            if(data.length() == 8) {
+                String[] data_split = data.split("/");
+                if(data_split.length == 3) {
+                    try {
+                        int dia = Integer.parseInt(data_split[0]);
+                        int mes = Integer.parseInt(data_split[1]);
+                        int ano = Integer.parseInt(data_split[2]);
+                        if((dia > 0 && dia < 31) && (mes > 0 && mes < 13) && (ano > 0)) {
+                            break;
+                        } else {
+                            System.out.println("Data inválida!");
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Apenas números e \"/\"!");
+                    }
+                } else {
+                    System.out.println("Formato inválido!");
+                }
+            } else {
+                System.out.println("Entrada inválida!");
+            }
+        }
         vendas_realizadas[indice_vendas_realizadas][2] = data;
 
         vendas_realizadas[indice_vendas_realizadas][3] = "n";
@@ -908,7 +1411,22 @@ public class Main {
         while(true) {
             menus(4);
             Scanner input = new Scanner(System.in);
-            int opc = input.nextInt();
+            String opcao;
+            while(true){
+                opcao = input.nextLine();
+                try {
+                    int opcao_int = Integer.parseInt(opcao);
+                    if(opcao_int > 0 && opcao_int < 4) {
+                        break;
+                    } else {
+                        System.out.print("Valor inválido, tente novamente!\n--> ");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Apenas números!\n--> ");
+                }
+            }
+            int opc = Integer.parseInt(opcao);
+
             switch(opc) {
                 case 1:
                     lancar_taxa_de_servico();
@@ -926,20 +1444,47 @@ public class Main {
 
     private static void lancar_taxa_de_servico() {
         Scanner input = new Scanner(System.in);
-        System.out.print("\nInsira o ID do funcionário: ");
-        String id = input.nextLine();
+        String id_string;
+        while(true) {
+            System.out.print("\nInsira o ID do funcionário: ");
+            id_string = input.nextLine();
+            try {
+                int int_id = Integer.parseInt(id_string);
+                if(int_id > 0) {
+                    break;
+                } else {
+                    System.out.println("ID não pode ser menor ou igual a 0!");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Apenas números!");
+            }
+        }
 
-        int id_int = Integer.parseInt(id);
+        int id_int = Integer.parseInt(id_string);
         if(funcs[id_int - 1][0] == null) {
             System.out.println("\nFuncionário não cadastrado!");
             return;
         }
 
-        taxas_de_servicos[indice_taxas_de_servicos][0] = id;
-        System.out.print("Valor da taxa: R$");
-        String valor_taxa = input.nextLine();
-        taxas_de_servicos[indice_taxas_de_servicos][1] = valor_taxa;
+        taxas_de_servicos[indice_taxas_de_servicos][0] = id_string;
 
+        String valor_taxa;
+        while(true) {
+            System.out.print("Valor da taxa: R$");
+            valor_taxa = input.nextLine();
+            try {
+                float float_taxa = Float.parseFloat(valor_taxa);
+                if(float_taxa > 0) {
+                    break;
+                } else {
+                    System.out.println("O valor da taxa não pode ser menor ou igual a 0!");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Apenas números e pontos flutuantes!");
+            }
+        }
+
+        taxas_de_servicos[indice_taxas_de_servicos][1] = valor_taxa;
         taxas_de_servicos[indice_taxas_de_servicos][2] = "n";
 
         indice_taxas_de_servicos++;
@@ -964,7 +1509,22 @@ public class Main {
         while(true) {
             menus(6);
             Scanner input = new Scanner(System.in);
-            int opc = input.nextInt();
+            String opcao;
+            while(true){
+                opcao = input.nextLine();
+                try {
+                    int opcao_int = Integer.parseInt(opcao);
+                    if(opcao_int > 0 && opcao_int < 3) {
+                        break;
+                    } else {
+                        System.out.print("Valor inválido, tente novamente!\n--> ");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Apenas números!\n--> ");
+                }
+            }
+            int opc = Integer.parseInt(opcao);
+
             switch(opc) {
                 case 1:
                     listar_agendas_de_pagamento();
