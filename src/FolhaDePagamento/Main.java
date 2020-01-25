@@ -1,6 +1,5 @@
 package FolhaDePagamento;
 
-import javax.sound.midi.SysexMessage;
 import java.util.Scanner;
 
 public class Main {
@@ -546,8 +545,9 @@ public class Main {
         int mes_hoje = Integer.parseInt(data[1]);
         int ano_hoje = Integer.parseInt(data[2]);
 
+        boolean bool_mes = mes_hoje == 1 || mes_hoje == 3 || mes_hoje == 5 || mes_hoje == 7 || mes_hoje == 8 || mes_hoje == 10;
         if(int_entrada == 1) {
-            if(mes_hoje == 1 || mes_hoje == 3 || mes_hoje == 5 || mes_hoje == 7 || mes_hoje == 8 || mes_hoje == 10) {
+            if(bool_mes) {
                 if(dia_hoje + 7 > 31) {
                     dia_hoje = (dia_hoje + 7) - 31;
                     mes_hoje += 1;
@@ -578,7 +578,7 @@ public class Main {
                 }
             }
         } else if(int_entrada == 2) {
-            if(mes_hoje == 1 || mes_hoje == 3 || mes_hoje == 5 || mes_hoje == 7 || mes_hoje == 8 || mes_hoje == 10) {
+            if(bool_mes) {
                 if(dia_hoje + 15 > 31) {
                     dia_hoje = (dia_hoje + 15) - 31;
                     mes_hoje += 1;
