@@ -62,14 +62,16 @@ public class Main {
         int mes_hoje = Integer.parseInt(data[1]);
         int ano_hoje = Integer.parseInt(data[2]);
 
-        if(mes_hoje == 1 || mes_hoje == 3 || mes_hoje == 5 || mes_hoje == 7 || mes_hoje == 8 || mes_hoje == 10) {
+        boolean mes_31 = mes_hoje == 1 || mes_hoje == 3 || mes_hoje == 5 || mes_hoje == 7 || mes_hoje == 8 || mes_hoje == 10;
+        boolean mes_30 = mes_hoje == 4 || mes_hoje == 6 || mes_hoje == 9 || mes_hoje == 11;
+        if(mes_31) {
             if(dia_hoje + 1 > 31) {
                 dia_hoje = (dia_hoje + 1) - 31;
                 mes_hoje += 1;
             } else {
                 dia_hoje = (dia_hoje + 1);
             }
-        } else if(mes_hoje == 4 || mes_hoje == 6 || mes_hoje == 9 || mes_hoje == 11) {
+        } else if(mes_30) {
             if(dia_hoje + 1 > 30) {
                 dia_hoje = (dia_hoje + 1) - 30;
                 mes_hoje += 1;
@@ -84,14 +86,14 @@ public class Main {
                     dia_hoje = (dia_hoje + 1) - 29;
                     mes_hoje += 1;
                 } else {
-                    dia_hoje = (dia_hoje + 7);
+                    dia_hoje = (dia_hoje + 1);
                 }
             } else {
                 if(dia_hoje + 1 > 28) {
                     dia_hoje = (dia_hoje + 1) - 28;
                     mes_hoje += 1;
                 } else {
-                    dia_hoje = (dia_hoje + 7);
+                    dia_hoje = (dia_hoje + 1);
                 }
             }
         } else { // Mês == 12
@@ -1695,7 +1697,8 @@ public class Main {
 
             String data_final;
             int int_entrada = Integer.parseInt(funcs[id - 1][12]);
-            String[] data = data_hoje.split("/");
+            String copia_data = data_hoje;
+            String[] data = copia_data.split("/");
             int dia_hoje = Integer.parseInt(data[0]);
             int mes_hoje = Integer.parseInt(data[1]);
             int ano_hoje = Integer.parseInt(data[2]);
