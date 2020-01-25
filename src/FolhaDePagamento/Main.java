@@ -77,11 +77,22 @@ public class Main {
                 dia_hoje = (dia_hoje + 1);
             }
         } else if(mes_hoje == 2) {
-            if(dia_hoje + 1 > 28) {
-                dia_hoje = (dia_hoje + 1) - 28;
-                mes_hoje += 1;
+            String ano_string = "20" + ano_hoje;
+            int ano_int = Integer.parseInt(ano_string);
+            if(ano_int % 400 == 0 || (ano_int % 4 == 0 && ano_int % 100 != 0)) { // Checa ano bissexto
+                if(dia_hoje + 1 > 29) {
+                    dia_hoje = (dia_hoje + 1) - 29;
+                    mes_hoje += 1;
+                } else {
+                    dia_hoje = (dia_hoje + 7);
+                }
             } else {
-                dia_hoje = (dia_hoje + 7);
+                if(dia_hoje + 1 > 28) {
+                    dia_hoje = (dia_hoje + 1) - 28;
+                    mes_hoje += 1;
+                } else {
+                    dia_hoje = (dia_hoje + 7);
+                }
             }
         } else { // Mês == 12
             if (dia_hoje + 1 > 31) {
@@ -190,7 +201,48 @@ public class Main {
             if(data_entrada.length() == 8) {
                 String[] data_entrada_split = data_entrada.split("/");
                 if(data_entrada_split.length == 3) {
-                    break;
+                    try {
+                        int dia_int = Integer.parseInt(data_entrada_split[0]);
+                        int mes_int = Integer.parseInt(data_entrada_split[1]);
+                        int ano_int = Integer.parseInt(data_entrada_split[2]);
+                        boolean mes_30 = mes_int == 4 || mes_int == 6 || mes_int == 9 || mes_int == 11;
+                        boolean mes_31 = mes_int == 1 || mes_int == 3 || mes_int == 5 || mes_int == 7 || mes_int == 8 || mes_int == 10 || mes_int == 12;
+                        if(ano_int < 0) {
+                            System.out.println("Ano inválido!");
+                        } else if(mes_30) {
+                            if((dia_int > 0 && dia_int <= 30) && ano_int > 0) {
+                                break;
+                            } else {
+                                System.out.println("Dia inválido!");
+                            }
+                        } else if(mes_int == 2) {
+                            String ano_string = "20" + ano_int;
+                            int ano = Integer.parseInt(ano_string);
+                            if(ano % 400 == 0 || (ano % 4 == 0 && ano % 100 != 0)) {
+                                if((dia_int > 0 && dia_int <= 29) && ano_int > 0) {
+                                    break;
+                                } else {
+                                    System.out.println("Dia inválido!");
+                                }
+                            } else {
+                                if((dia_int > 0 && dia_int <= 28) && ano_int > 0) {
+                                    break;
+                                } else {
+                                    System.out.println("Dia inválido!");
+                                }
+                            }
+                        } else if(mes_31) {
+                            if((dia_int > 0 && dia_int <= 31) && ano_int > 0) {
+                                break;
+                            } else {
+                                System.out.println("Dia inválido!");
+                            }
+                        } else {
+                            System.out.println("Mes inválido!");
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Apenas números e \"/\"!");
+                    }
                 } else {
                     System.out.println("Formato inválido!");
                 }
@@ -545,16 +597,17 @@ public class Main {
         int mes_hoje = Integer.parseInt(data[1]);
         int ano_hoje = Integer.parseInt(data[2]);
 
-        boolean bool_mes = mes_hoje == 1 || mes_hoje == 3 || mes_hoje == 5 || mes_hoje == 7 || mes_hoje == 8 || mes_hoje == 10;
+        boolean mes_31 = mes_hoje == 1 || mes_hoje == 3 || mes_hoje == 5 || mes_hoje == 7 || mes_hoje == 8 || mes_hoje == 10;
+        boolean mes_30 = mes_hoje == 4 || mes_hoje == 6 || mes_hoje == 9 || mes_hoje == 11;
         if(int_entrada == 1) {
-            if(bool_mes) {
+            if(mes_31) {
                 if(dia_hoje + 7 > 31) {
                     dia_hoje = (dia_hoje + 7) - 31;
                     mes_hoje += 1;
                 } else {
                     dia_hoje = (dia_hoje + 7);
                 }
-            } else if(mes_hoje == 4 || mes_hoje == 6 || mes_hoje == 9 || mes_hoje == 11) {
+            } else if(mes_30) {
                 if(dia_hoje + 7 > 30) {
                     dia_hoje = (dia_hoje + 7) - 30;
                     mes_hoje += 1;
@@ -562,11 +615,22 @@ public class Main {
                     dia_hoje = (dia_hoje + 7);
                 }
             } else if(mes_hoje == 2) {
-                if(dia_hoje + 7 > 28) {
-                    dia_hoje = (dia_hoje + 7) - 28;
-                    mes_hoje += 1;
+                String ano_string = "20" + ano_hoje;
+                int ano_int = Integer.parseInt(ano_string);
+                if(ano_int % 400 == 0 || (ano_int % 4 == 0 && ano_int % 100 != 0)) {
+                    if(dia_hoje + 7 > 29) {
+                        dia_hoje = (dia_hoje + 7) - 29;
+                        mes_hoje += 1;
+                    } else {
+                        dia_hoje = (dia_hoje + 7);
+                    }
                 } else {
-                    dia_hoje = (dia_hoje + 7);
+                    if(dia_hoje + 7 > 28) {
+                        dia_hoje = (dia_hoje + 7) - 28;
+                        mes_hoje += 1;
+                    } else {
+                        dia_hoje = (dia_hoje + 7);
+                    }
                 }
             } else { // Mês == 12
                 if (dia_hoje + 7 > 31) {
@@ -578,14 +642,14 @@ public class Main {
                 }
             }
         } else if(int_entrada == 2) {
-            if(bool_mes) {
+            if(mes_31) {
                 if(dia_hoje + 15 > 31) {
                     dia_hoje = (dia_hoje + 15) - 31;
                     mes_hoje += 1;
                 } else {
                     dia_hoje = (dia_hoje + 15);
                 }
-            } else if(mes_hoje == 4 || mes_hoje == 6 || mes_hoje == 9 || mes_hoje == 11) {
+            } else if(mes_30) {
                 if(dia_hoje + 15 > 30) {
                     dia_hoje = (dia_hoje + 15) - 30;
                     mes_hoje += 1;
@@ -593,11 +657,22 @@ public class Main {
                     dia_hoje = (dia_hoje + 15);
                 }
             } else if(mes_hoje == 2) {
-                if(dia_hoje + 15 > 28) {
-                    dia_hoje = (dia_hoje + 15) - 28;
-                    mes_hoje += 1;
+                String ano_string = "20" + ano_hoje;
+                int ano_int = Integer.parseInt(ano_string);
+                if(ano_int % 400 == 0 || (ano_int % 4 == 0 && ano_int % 100 != 0)) {
+                    if(dia_hoje + 15 > 29) {
+                        dia_hoje = (dia_hoje + 15) - 29;
+                        mes_hoje += 1;
+                    } else {
+                        dia_hoje = (dia_hoje + 15);
+                    }
                 } else {
-                    dia_hoje = (dia_hoje + 15);
+                    if(dia_hoje + 15 > 28) {
+                        dia_hoje = (dia_hoje + 15) - 28;
+                        mes_hoje += 1;
+                    } else {
+                        dia_hoje = (dia_hoje + 15);
+                    }
                 }
             } else { // Mês == 12
                 if (dia_hoje + 15 > 31) {
@@ -612,6 +687,19 @@ public class Main {
             if(mes_hoje == 12) {
                 mes_hoje = 1;
                 ano_hoje += 1;
+            } else if(mes_hoje == 2) {
+                String ano_string = "20" + ano_hoje;
+                int ano_int = Integer.parseInt(ano_string);
+                if(ano_int % 400 == 0 || (ano_int % 4 == 0 && ano_int % 100 != 0)) {
+                    if(dia_hoje > 29) {
+                        dia_hoje = 29;
+                    }
+                } else {
+                    if(dia_hoje > 28) {
+                        dia_hoje = 28;
+                    }
+                }
+                mes_hoje += 1;
             } else {
                 mes_hoje += 1;
             }
@@ -1358,34 +1446,7 @@ public class Main {
         }
         vendas_realizadas[indice_vendas_realizadas][1] = valor;
 
-        String data;
-        while(true) {
-            System.out.print("Data da venda (dd/mm/aa): ");
-            data = input.nextLine();
-            if(data.length() == 8) {
-                String[] data_split = data.split("/");
-                if(data_split.length == 3) {
-                    try {
-                        int dia = Integer.parseInt(data_split[0]);
-                        int mes = Integer.parseInt(data_split[1]);
-                        int ano = Integer.parseInt(data_split[2]);
-                        if((dia > 0 && dia < 31) && (mes > 0 && mes < 13) && (ano > 0)) {
-                            break;
-                        } else {
-                            System.out.println("Data inválida!");
-                        }
-                    } catch (NumberFormatException e) {
-                        System.out.println("Apenas números e \"/\"!");
-                    }
-                } else {
-                    System.out.println("Formato inválido!");
-                }
-            } else {
-                System.out.println("Entrada inválida!");
-            }
-        }
-        vendas_realizadas[indice_vendas_realizadas][2] = data;
-
+        vendas_realizadas[indice_vendas_realizadas][2] = data_hoje;
         vendas_realizadas[indice_vendas_realizadas][3] = "n";
 
         indice_vendas_realizadas++;
@@ -1639,15 +1700,17 @@ public class Main {
             int mes_hoje = Integer.parseInt(data[1]);
             int ano_hoje = Integer.parseInt(data[2]);
 
+            boolean mes_31 = mes_hoje == 1 || mes_hoje == 3 || mes_hoje == 5 || mes_hoje == 7 || mes_hoje == 8 || mes_hoje == 10;
+            boolean mes_30 = mes_hoje == 4 || mes_hoje == 6 || mes_hoje == 9 || mes_hoje == 11;
             if(int_entrada == 1) {
-                if(mes_hoje == 1 || mes_hoje == 3 || mes_hoje == 5 || mes_hoje == 7 || mes_hoje == 8 || mes_hoje == 10) {
+                if(mes_31) {
                     if(dia_hoje + 7 > 31) {
                         dia_hoje = (dia_hoje + 7) - 31;
                         mes_hoje += 1;
                     } else {
                         dia_hoje = (dia_hoje + 7);
                     }
-                } else if(mes_hoje == 4 || mes_hoje == 6 || mes_hoje == 9 || mes_hoje == 11) {
+                } else if(mes_30) {
                     if(dia_hoje + 7 > 30) {
                         dia_hoje = (dia_hoje + 7) - 30;
                         mes_hoje += 1;
@@ -1655,11 +1718,22 @@ public class Main {
                         dia_hoje = (dia_hoje + 7);
                     }
                 } else if(mes_hoje == 2) {
-                    if(dia_hoje + 7 > 28) {
-                        dia_hoje = (dia_hoje + 7) - 28;
-                        mes_hoje += 1;
+                    String ano_string = "20" + ano_hoje;
+                    int ano_int = Integer.parseInt(ano_string);
+                    if(ano_int % 400 == 0 || (ano_int % 4 == 0 && ano_int % 100 != 0)) {
+                        if(dia_hoje + 7 > 29) {
+                            dia_hoje = (dia_hoje + 7) - 29;
+                            mes_hoje += 1;
+                        } else {
+                            dia_hoje = (dia_hoje + 7);
+                        }
                     } else {
-                        dia_hoje = (dia_hoje + 7);
+                        if(dia_hoje + 7 > 28) {
+                            dia_hoje = (dia_hoje + 7) - 28;
+                            mes_hoje += 1;
+                        } else {
+                            dia_hoje = (dia_hoje + 7);
+                        }
                     }
                 } else { // Mês == 12
                     if (dia_hoje + 7 > 31) {
@@ -1671,14 +1745,14 @@ public class Main {
                     }
                 }
             } else if(int_entrada == 2) {
-                if(mes_hoje == 1 || mes_hoje == 3 || mes_hoje == 5 || mes_hoje == 7 || mes_hoje == 8 || mes_hoje == 10) {
+                if(mes_31) {
                     if(dia_hoje + 15 > 31) {
                         dia_hoje = (dia_hoje + 15) - 31;
                         mes_hoje += 1;
                     } else {
                         dia_hoje = (dia_hoje + 15);
                     }
-                } else if(mes_hoje == 4 || mes_hoje == 6 || mes_hoje == 9 || mes_hoje == 11) {
+                } else if(mes_30) {
                     if(dia_hoje + 15 > 30) {
                         dia_hoje = (dia_hoje + 15) - 30;
                         mes_hoje += 1;
@@ -1686,11 +1760,22 @@ public class Main {
                         dia_hoje = (dia_hoje + 15);
                     }
                 } else if(mes_hoje == 2) {
-                    if(dia_hoje + 15 > 28) {
-                        dia_hoje = (dia_hoje + 15) - 28;
-                        mes_hoje += 1;
+                    String ano_string = "20" + ano_hoje;
+                    int ano_int = Integer.parseInt(ano_string);
+                    if(ano_int % 400 == 0 || (ano_int % 4 == 0 && ano_int % 100 != 0)) {
+                        if(dia_hoje + 15 > 29) {
+                            dia_hoje = (dia_hoje + 15) - 29;
+                            mes_hoje += 1;
+                        } else {
+                            dia_hoje = (dia_hoje + 15);
+                        }
                     } else {
-                        dia_hoje = (dia_hoje + 15);
+                        if(dia_hoje + 15 > 28) {
+                            dia_hoje = (dia_hoje + 15) - 28;
+                            mes_hoje += 1;
+                        } else {
+                            dia_hoje = (dia_hoje + 15);
+                        }
                     }
                 } else { // Mês == 12
                     if (dia_hoje + 15 > 31) {
@@ -1705,6 +1790,19 @@ public class Main {
                 if(mes_hoje == 12) {
                     mes_hoje = 1;
                     ano_hoje += 1;
+                } else if(mes_hoje == 2) {
+                    String ano_string = "20" + ano_hoje;
+                    int ano_int = Integer.parseInt(ano_string);
+                    if(ano_int % 400 == 0 || (ano_int % 4 == 0 && ano_int % 100 != 0)) {
+                        if(dia_hoje > 29) {
+                            dia_hoje = 29;
+                        }
+                    } else {
+                        if(dia_hoje > 28) {
+                            dia_hoje = 28;
+                        }
+                    }
+                    mes_hoje += 1;
                 } else {
                     mes_hoje += 1;
                 }
